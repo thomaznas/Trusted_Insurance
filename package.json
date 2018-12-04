@@ -1,0 +1,25 @@
+{
+  "name": "factualnews",
+  "version": "1.0.0",
+  "description": "Factual News",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomaznas/FactualNews.git"
+  },
+  "author": "Thomaz and Ambuj",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thomaznas/FactualNews/issues"
+  },
+  "homepage": "https://github.com/thomaznas/FactualNews#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "lowdb": "^1.0.0",
+    "web3": "^1.0.0-beta.36"
+  }
+}

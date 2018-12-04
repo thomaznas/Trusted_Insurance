@@ -1,0 +1,198 @@
+{
+  "factualnews": [
+    {
+      "id": "2021963053",
+      "status": "Approve Reviewer",
+      "title": "Is it true that the children of congressmen are exempt from paying back their student loans?",
+      "newsBody": "https://www.snopes.com/fact-check/congressional-staffers-family-members-exempt-repaying-student-loans/",
+      "newsRev": "",
+      "originator": "REQUESTER_2",
+      "reviewer": "REVIEWER_1",
+      "auditors": [
+        "AUDITOR_1"
+      ],
+      "funds": 1,
+      "auditorsApprovalStatus": [
+        -1
+      ]
+    },
+    {
+      "id": "2419605485",
+      "status": "Approved",
+      "title": "Did Donald Trump Call Republican Voters Dumb?",
+      "newsBody": "https://www.cheatsheet.com/politics/did-donald-trump-call-republican-voters-dumb.html/",
+      "newsRev": "https://www.factcheck.org/2015/11/bogus-meme-targets-trump/",
+      "originator": "REQUESTER_1",
+      "reviewer": "REVIEWER_1",
+      "auditors": [
+        "AUDITOR_1"
+      ],
+      "funds": 1,
+      "auditorsApprovalStatus": [
+        1
+      ]
+    },
+    {
+      "id": "1850470806",
+      "status": "Approved",
+      "title": "The MMR vaccine and autism: Sensation, refutation, retraction, and fraud",
+      "newsBody": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3136032/",
+      "newsRev": "https://www.factcheck.org/2017/11/debunking-false-vaccine-claim/",
+      "originator": "REQUESTER_2",
+      "reviewer": "REVIEWER_2",
+      "auditors": [
+        "AUDITOR_2"
+      ],
+      "funds": 4,
+      "auditorsApprovalStatus": [
+        1
+      ]
+    },
+    {
+      "id": "69933987",
+      "status": "Blank",
+      "title": "a1",
+      "newsBody": "a1",
+      "newsRev": "",
+      "originator": "REQUESTER_1",
+      "reviewer": "",
+      "auditors": [],
+      "funds": 0,
+      "auditorsApprovalStatus": []
+    },
+    {
+      "id": "3961297114",
+      "status": "Approved",
+      "title": "T1",
+      "newsBody": "http://www.uol.com.br",
+      "newsRev": "This web site is trustworthy",
+      "originator": "REQUESTER #1",
+      "reviewer": "REVIEWER2",
+      "auditors": [
+        "AUDITOR1",
+        "AUDITOR3"
+      ],
+      "funds": 15,
+      "auditorsApprovalStatus": [
+        -1,
+        1
+      ]
+    },
+    {
+      "id": "1942222715",
+      "status": "Denied",
+      "title": "T2",
+      "newsBody": "http://www.estaminas.com.br",
+      "newsRev": "Nonono",
+      "originator": "REQUESTER #2",
+      "reviewer": "REVIEWER1",
+      "auditors": [
+        "AUDITOR2",
+        "AUDITOR3"
+      ],
+      "funds": 30,
+      "auditorsApprovalStatus": [
+        0,
+        -1
+      ]
+    }
+  ],
+  "originators": [
+    {
+      "email": "REQUESTER #1",
+      "password": "r1",
+      "MMAccount": "0x3586ab6Cdb0D10ec8d2b305b743C97B297941C39",
+      "type": "O"
+    },
+    {
+      "email": "REQUESTER #2",
+      "password": "r2",
+      "MMAccount": "0xc04811C52146c527C7a147faA15ed427ffae651b",
+      "type": "O"
+    },
+    {
+      "email": "REQUESTER_1",
+      "password": "r1",
+      "MMAccount": "0xCa2A0FA8f2B0D62C941DB5762bD329be15BAe896",
+      "type": "O"
+    },
+    {
+      "email": "REQUESTER_2",
+      "password": "r2",
+      "MMAccount": "0x4Fd5861f6d0051eFeda69B966bcD3a136ca705cF",
+      "type": "O"
+    }
+  ],
+  "reviewers": [
+    {
+      "email": "REVIEWER1",
+      "password": "r1",
+      "MMAccount": "0xA9cF50A0F27Aa1F3693511908525b182Cc9c4c81",
+      "type": "R"
+    },
+    {
+      "email": "REVIEWER2",
+      "password": "r2",
+      "MMAccount": "0x414b61b59742b405887CfF81ef2c8f50b78f5243",
+      "type": "R"
+    },
+    {
+      "email": "REVIEWER_1",
+      "password": "r1",
+      "MMAccount": "0x6DcF93423d24AD3F270dD64D3888D28C533D79B1",
+      "type": "R"
+    },
+    {
+      "email": "REVIEWER_2",
+      "password": "r2",
+      "MMAccount": "0x219600C4666E253A60c79F84227a6E65bbf37C2a",
+      "type": "R"
+    }
+  ],
+  "auditors": [
+    {
+      "email": "AUDITOR1",
+      "password": "a1",
+      "MMAccount": "0xa522FD59F90b71643D165a07fB267A367D52ede0",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR2",
+      "password": "a2",
+      "MMAccount": "0xE1569693d673C67e6aF3F17505A70eC27225716B",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR3",
+      "password": "a3",
+      "MMAccount": "0x87392E69535E1AdFd5A3f82F5B7270a73F270ee3",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR_1",
+      "password": "a1",
+      "MMAccount": "0x8c856F02038721e6E48B04A7A67b56FCC391d0Ff",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR_2",
+      "password": "a2",
+      "MMAccount": "0x480bB43aaC21C6927BFA7f309B8B8b20D462715A",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR_3",
+      "password": "a3",
+      "MMAccount": "0x06bC9d4b7E085FACC7CAbC7211F7312046b601f1",
+      "type": "A"
+    }
+  ],
+  "config": [
+    {
+      "id": 1,
+      "Network": "Rinkeby",
+      "contractAddress": "0x7bb874f7c71cb23cb86d4679e2729a0f46e82875",
+      "network": "Ganache"
+    }
+  ]
+}
