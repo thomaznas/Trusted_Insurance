@@ -979,7 +979,7 @@ app.post('/getconfigdata', function (req, res) {
     msg = "FAILURE: config data could not be retrieved !";
     configDataFound = findConfigData();
     if (!isEmpty(configDataFound)) {
-        msg = "SUCCESS: News was created ! ";
+        msg = "SUCCESS: config data was got successfully ! ";
         res.send(configDataFound);
     }
     else {

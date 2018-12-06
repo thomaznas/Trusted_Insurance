@@ -303,15 +303,9 @@ var setActiveNavBar = function(id){
 
 var loadViewFactualNewsParamOpened = function(userName,userType,newsStatus,detailFunctionName){
 
-    if ((userType != '') && (isEmpty(currentUser)) ) {
+    if (userName != '') {
         target.innerHTML = "FAILURE: No user logged in ...";
         return;
-    }
-    if (userType != '') && (!isEmpty(currentUser)) ) {
-        if (userType != currentUser.type) {
-            target.innerHTML = "FAILURE: No user logged in ...";
-            return;
-        }
     }
 
     loadViewFactualNewsParamInternal(userName,userType,newsStatus,detailFunctionName);
@@ -320,12 +314,29 @@ var loadViewFactualNewsParamOpened = function(userName,userType,newsStatus,detai
 
 var loadViewFactualNewsParam = function(userName,userType,newsStatus,detailFunctionName){
 
-    if (userName != '') {
-        if (isEmpty(currentUser) ) {
+    if ((userType != '') && (isEmpty(currentUser)) ) {
+            target.innerHTML = "FAILURE: No user logged in ...";
+            return;
+    }
+    if ((userType != '') && (!isEmpty(currentUser)) ) {
+        if (userType != currentUser.type) {
             target.innerHTML = "FAILURE: No user logged in ...";
             return;
         }
-    }   
+    }
+    if (userName != '') {
+        if (isEmpty(currentUser))  {
+            target.innerHTML = "FAILURE: No user logged in ...";
+            return;
+        }
+        userName = currentUser.email;            
+    }
+
+
+    if (userName == '') {
+        userType = '';
+    }
+    
     loadViewFactualNewsParamInternal(userName,userType,newsStatus,detailFunctionName);
 
 }
@@ -363,6 +374,10 @@ var loadViewFactualNews = function(){
 
 var loadCreateNewNewsParam = function() {
     if (isEmpty(currentUser))  {
+        target.innerHTML = "FAILURE: No user logged in ...";
+        return;
+    }
+    if (currentUser.type != 'O') {
         target.innerHTML = "FAILURE: No user logged in ...";
         return;
     }
