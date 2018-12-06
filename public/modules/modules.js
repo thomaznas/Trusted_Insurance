@@ -29,7 +29,7 @@ ui.navigation = `
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','O','','loadNewsClickParam')">View my News Review Requests</a>
                 <a class="dropdown-item" href="#" onclick="loadCreateNewNewsParam()">Create News Review Requests</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','',['Blank' , 'Requested'],'loadAddFundsNewsClickParam')">Add Funds to a News Review Request</a>
+                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','O',['Blank' , 'Requested'],'loadAddFundsNewsClickParam')">Add Funds to a News Review Request</a>
                 <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','O',['Approve Reviewer'],'loadApproveRevAudClickParam')">Approve Reviewer and Auditors </a>
             </div>
         </li>
@@ -41,7 +41,7 @@ ui.navigation = `
                 <a class="dropdown-item" href="#" onclick="loadLoginParam('R')">Login</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','R','','loadNewsClickParam')">View my News Review Requests</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','',['Requested'],'loadApplyForReviewClickParam')">Apply for a Review</a>
+                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','R',['Requested'],'loadApplyForReviewClickParam')">Apply for a Review</a>
                 <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','R',['Reviewing'],'loadCompleteReviewClickParam')">Complete a Review</a>
             </div>
         </li>
@@ -53,7 +53,7 @@ ui.navigation = `
                 <a class="dropdown-item" href="#" onclick="loadLoginParam('A')">Login</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','A','','loadNewsClickParam')">View my News Review Requests</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','',['Requested' , 'Approve Reviewer'],'loadApplyForAuditClickParam')">Apply for a Audit</a>
+                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','A',['Requested' , 'Approve Reviewer'],'loadApplyForAuditClickParam')">Apply for a Audit</a>
                 <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','A',['Auditing'],'loadApproveDenyReviewClickParam')">Approve or Deny a Review</a>
             </div>
         </li>
@@ -303,9 +303,15 @@ var setActiveNavBar = function(id){
 
 var loadViewFactualNewsParamOpened = function(userName,userType,newsStatus,detailFunctionName){
 
-    if ((userName != '') && (isEmpty(currentUser)) ) {
+    if ((userType != '') && (isEmpty(currentUser)) ) {
         target.innerHTML = "FAILURE: No user logged in ...";
         return;
+    }
+    if (userType != '') && (!isEmpty(currentUser)) ) {
+        if (userType != currentUser.type) {
+            target.innerHTML = "FAILURE: No user logged in ...";
+            return;
+        }
     }
 
     loadViewFactualNewsParamInternal(userName,userType,newsStatus,detailFunctionName);
