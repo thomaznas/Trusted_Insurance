@@ -3,7 +3,7 @@
     {
       "id": "2419605485",
       "status": "Approved",
-      "title": "1.125 - ",
+      "title": "1.125 - Architecting & Engineering Software Systems ",
       "newsBody": "https://fullstacks.org/",
       "newsRev": "This is a trustworthy course !!!",
       "originator": "REQUESTER 1",
@@ -152,7 +152,7 @@
   "config": [
     {
       "id": 1,
-      "contractAddress": "0xe5de34e97788fcec5337fb3c850be352f99e69e2",
+      "contractAddress": "0x70e57d8fea74779fc95cd1152beab50e3a12b5a9",
       "network": "Ganache Cloud"
     }
   ]

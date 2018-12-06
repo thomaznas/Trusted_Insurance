@@ -85,6 +85,7 @@ ui.navigation = `
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParamOpened('','','','loadNewsClickParam')" id="navViewlAllFactualNews">View All Factual News </a>
                 <a class="dropdown-item" href="#" onclick="loadConfigParam()">Config</a>
+                <a class="dropdown-item" href="#" onclick="loadKeys()">Keys</a>
             </div>
         </li>
 
@@ -102,6 +103,25 @@ ui.viewFactualNews = `
     <!-- View Factual News --> 
 
 `;
+
+ui.keys = `
+    <!-- Keys --> 
+
+    <br> REQUESTER 1 - 8726f64af11e65d42d4f78734391835c21c5fe2f6d5c9206a9abc4b8b9c737a0
+    <br> REQUESTER 2 - 8f14d0a4054c4d75a95a397657e10621a6a57d773401e719fe54c2d39079df8e
+    <br> REVIEWER 1 - b98eb064261534718be470f3aa2006fd0a865db2055786ba5bd05d24ab57602f
+    <br> REVIEWER 2 - 52b5564362c19910aedcaa6a9a747c98c0001ee77c84586350f1a12d8dfd6393
+    <br> AUDITOR 1 - e632491b32c923799b76fe171c065a9a336de352a3d255d0aa92ddbfe246d252
+    <br> AUDITOR 2 - ddd8495be3e6cc764b34ddf8562d47c38b81796d3373494c121730f9c893665b
+    <br> AUDITOR 3 - 899649aa86d062fb12586250783ec78a41d57fae90e6817fb8c5d5e4060b9313
+
+`;
+
+// JoinUs
+var loadKeys = function(){
+    target.innerHTML = ui.keys;
+}
+
 
 ui.JoinUs = `
     <div class="card bg-light mb-3" style="max-width: 35rem;"  >
