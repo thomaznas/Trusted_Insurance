@@ -595,7 +595,7 @@ function checkStatus(news) {
         return 0;
     }
 
-    if (countApproved > (tempTotalAuditors/2)) {
+    if (countApproved >= (tempTotalAuditors/2)) {
         return 1;
     }
 

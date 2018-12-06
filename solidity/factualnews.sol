@@ -249,7 +249,7 @@ contract FactualNews {
             return "Denied";
         } 
         // Majority Approved
-        if (_countApproved > (tempTotalAuditors/2)) {
+        if (_countApproved >= (tempTotalAuditors/2)) {
             return "Approved";
         } 
         return "Undefined";
