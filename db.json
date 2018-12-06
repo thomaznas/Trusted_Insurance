@@ -99,13 +99,25 @@
   ],
   "originators": [
     {
-      "email": "REQUESTER #1",
+      "email": "REQUESTER_#1",
+      "password": "r1",
+      "MMAccount": "0xAA876e8ec848aB24fFAD5F0ec1F8c4E55cC37fF9",
+      "type": "O"
+    },
+    {
+      "email": "REQUESTER_#2",
+      "password": "r2",
+      "MMAccount": "0x6Ab6E3D46365D9429820cf82E92Bfd460b9A83AD",
+      "type": "O"
+    },
+    {
+      "email": "REQUESTER 1",
       "password": "r1",
       "MMAccount": "0x3586ab6Cdb0D10ec8d2b305b743C97B297941C39",
       "type": "O"
     },
     {
-      "email": "REQUESTER #2",
+      "email": "REQUESTER 2",
       "password": "r2",
       "MMAccount": "0xc04811C52146c527C7a147faA15ed427ffae651b",
       "type": "O"
@@ -125,13 +137,25 @@
   ],
   "reviewers": [
     {
-      "email": "REVIEWER1",
+      "email": "REVIEWER_#1",
+      "password": "r1",
+      "MMAccount": "0x22606B7C501b7c2c5Bf50a413d75078Afc23041a",
+      "type": "R"
+    },
+    {
+      "email": "REVIEWER_#2",
+      "password": "r2",
+      "MMAccount": "0x20Dbbb6363bEEfa4569FeB17e12825ECa2512C94",
+      "type": "R"
+    },
+    {
+      "email": "REVIEWER 1",
       "password": "r1",
       "MMAccount": "0xA9cF50A0F27Aa1F3693511908525b182Cc9c4c81",
       "type": "R"
     },
     {
-      "email": "REVIEWER2",
+      "email": "REVIEWER 2",
       "password": "r2",
       "MMAccount": "0x414b61b59742b405887CfF81ef2c8f50b78f5243",
       "type": "R"
@@ -151,19 +175,37 @@
   ],
   "auditors": [
     {
-      "email": "AUDITOR1",
+      "email": "AUDITOR_#1",
+      "password": "a1",
+      "MMAccount": "0x1300D3e2f73634DfA7Ea82Df0F6885300412c8C8",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR_#2",
+      "password": "a2",
+      "MMAccount": "0xD164a5aeb505dAD6ea92329d62E4b3D4F0549633",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR_#3",
+      "password": "a3",
+      "MMAccount": "0x383B151C0E6B51f5b86DA4840D5485F23796964C",
+      "type": "A"
+    },
+    {
+      "email": "AUDITOR 1",
       "password": "a1",
       "MMAccount": "0xa522FD59F90b71643D165a07fB267A367D52ede0",
       "type": "A"
     },
     {
-      "email": "AUDITOR2",
+      "email": "AUDITOR 2",
       "password": "a2",
       "MMAccount": "0xE1569693d673C67e6aF3F17505A70eC27225716B",
       "type": "A"
     },
     {
-      "email": "AUDITOR3",
+      "email": "AUDITOR 3",
       "password": "a3",
       "MMAccount": "0x87392E69535E1AdFd5A3f82F5B7270a73F270ee3",
       "type": "A"
