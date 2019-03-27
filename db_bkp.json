@@ -2,9 +2,9 @@
   "config": [
     {
       "id": 1,
-      "contractAddress": "0xf4cc5168b744814c1a928ac9afd6ac99608220c8",
-      "network": "Ganache Cloud",
-      "oracleNum": 1,
+      "contractAddress": "0x48c87930459105a7c198a34da1151bf2607457e4",
+      "network": "Ganache Cloud" ,
+      "oracleNum": 3,
       "valuePerMinute": 0.1,
       "maxMinutes": 120,
       "premiumFee": 1
@@ -57,7 +57,7 @@
   "fdi": [
     {
       "id": "SG1212",
-      "status": "Finalized",
+      "status": "Open",
       "funds": 100,
       "coverageNum": 8,
       "delay": 0,
@@ -65,7 +65,6 @@
       "valuePerMinute": 0.1,
       "maxMinutes": 120,
       "premiumFee": 1,
-      "insurer": "INSURER_1",
       "coverages": [
         {
           "account": "0x1111_thomaz",
@@ -92,32 +91,100 @@
       ]
     },
     {
-      "id": "BA1234",
+      "id": "BA4567",
       "status": "Open",
-      "funds": "1",
-      "coverageNum": "4",
+      "funds": 1000,
+      "coverageNum": 20,
       "delay": 0,
-      "oracleNum": 1,
+      "oracleNum": 3,
       "valuePerMinute": 0.1,
       "maxMinutes": 120,
       "premiumFee": 1,
-      "insurer": "INSURER_1",
       "coverages": [],
       "oracleInputDelay": []
     },
     {
-      "id": "JJ1234",
+      "id": "BA1234",
       "status": "Open",
-      "funds": "1",
-      "coverageNum": "4",
+      "funds": "120",
+      "coverageNum": 0,
       "delay": 0,
-      "oracleNum": 1,
+      "oracleNum": 3,
       "valuePerMinute": 0.1,
       "maxMinutes": 120,
       "premiumFee": 1,
-      "insurer": "INSURER_1",
       "coverages": [],
-      "oracleInputDelay": []
+      "oracleInputDelay": [],
+    },
+    {
+      "id": "t",
+      "status": "Reporting",
+      "funds": "0.01",
+      "coverageNum": 0,
+      "delay": 0,
+      "oracleNum": 3,
+      "valuePerMinute": 0.1,
+      "maxMinutes": 120,
+      "premiumFee": 1,
+      "coverages": [
+        {
+          "account": "0x83073AA0446B94ABE6F9D0C497290655E64fE367",
+          "amount": 0.1,
+          "type": ""
+        }
+      ],
+      "oracleInputDelay": [
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 100
+        },
+        {
+          "oracleName": "ORACLE_2",
+          "isDelayed": false,
+          "delayValue": 0
+        },
+        {
+          "oracleName": "ORACLE_3",
+          "isDelayed": true,
+          "delayValue": 120
+        }
+      ]
+    },
+    {
+      "id": "t3",
+      "status": "Reporting",
+      "funds": "5",
+      "coverageNum": 0,
+      "delay": 0,
+      "oracleNum": 3,
+      "valuePerMinute": 0.1,
+      "maxMinutes": 120,
+      "premiumFee": 1,
+      "coverages": [
+        {
+          "account": "0xC33712a03dE2b496d17a057c8A75B371ED0717c2",
+          "amount": 0.1,
+          "type": ""
+        }
+      ],
+      "oracleInputDelay": [
+        {
+          "oracleName": "THOMAZ",
+          "isDelayed": true,
+          "delayValue": 120
+        },
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 120
+        },
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 120
+        }
+      ]
     }
   ]
 }

@@ -1,167 +1,93 @@
-var contractAddress = "0x8301e49bf9746b1f20bd0520f980d14ded9eb1e9";
+var contractAddress = "0x4a20394dbf7835acbc2d283f4d46c1cab65f4240";
 
 var configData = { id: 1, network: "Rinkeby",
-                   contractAddress: contractAddress } ;
+                   contractAddress: contractAddress,
+                   oracleNum: 3,
+                   valuePerMinute: 0.1,
+                   maxMinutes: 120,
+                   premiumFee: 1
+                 } ;
+
+var costFDI = 0.1;
+
+var firstTimeAccountChanged = true;
 
 var ui = {};
 
 ui.navigation = `
 <!-- ------------- YOUR CODE: Navigation UI ------------- --> 
 <a class="navbar-brand" href="#" onclick="defaultModule();" >
-  <img src="/factualnews_icon.png" width="50" height="50" class="d-inline-block align-center" alt=""  >
-   Factual News</a>
+  <img src="/fdi_icon.png" width="50" height="50" class="d-inline-block align-center" alt=""  >
+   Flight Delay Insurance</a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
  <span class="navbar-toggler-icon"></span>
 </button>
 
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-        <a class="nav-link" href="#" onclick="loadViewFactualNewsParamOpened('','',['Approved'],'loadNewsClickParam')" id="navViewApprovedFactualNews">Factual News </a>
-        </li>
 
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Requesters
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#" onclick="loadLoginParam('O')">Login</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','O','','loadNewsClickParam')">View my News Review Requests</a>
-                <a class="dropdown-item" href="#" onclick="loadCreateNewNewsParam()">Create News Review Requests</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','O',['Blank' , 'Requested'],'loadAddFundsNewsClickParam')">Add Funds to a News Review Request</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','O',['Approve Reviewer'],'loadApproveRevAudClickParam')">Approve Reviewer and Auditors </a>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Reviewers
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#" onclick="loadLoginParam('R')">Login</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','R','','loadNewsClickParam')">View my News Review Requests</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','R',['Requested'],'loadApplyForReviewClickParam')">Apply for a Review</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','R',['Reviewing'],'loadCompleteReviewClickParam')">Complete a Review</a>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Auditors
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#" onclick="loadLoginParam('A')">Login</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','A','','loadNewsClickParam')">View my News Review Requests</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('','A',['Requested' , 'Approve Reviewer'],'loadApplyForAuditClickParam')">Apply for a Audit</a>
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParam('Current','A',['Auditing'],'loadApproveDenyReviewClickParam')">Approve or Deny a Review</a>
-            </div>
-        </li>
-        <li class="nav-item active">
-        <a class="nav-link" href="#" onclick="loadLogoutParam()" id="navLogout">Logout</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Join us !
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#" onclick="loadJoinUsParam('O')">Join us As Requester</a>
-                <a class="dropdown-item" href="#" onclick="loadUpdateMMAccParam('O')">Update Requester Account</a>
-                <div class="dropdown-divider"></div>
+    <li class="nav-item active">
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Passenger
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" onclick="loadViewFDIParam('',['Open'],'','loadBuyFDIClickParam')" id="navViewFDI">Buy an Insurance</a>
+        </div>
+    </li>
+   
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insurer
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" onclick="loadCreateFDIParam()" id="navNewFDI">New Flight Delay Insurance </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" onclick="loadViewFDIParam('',[],'<CurrentUser>','loadFDIClickParam')" id="navViewFDI">My Flight Delay Insurance</a>
+        </div>
+    </li>
 
-                <a class="dropdown-item" href="#" onclick="loadJoinUsParam('R')">Join us as a Reviewer</a>
-                <a class="dropdown-item" href="#" onclick="loadUpdateMMAccParam('R')">Update Reviewer Account</a>
-                <div class="dropdown-divider"></div>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Trusted ORACLES
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" onclick="loadViewFDIParam('',['Open' , 'Reporting'],'','loadInputDelayClickParam')" id="navViewFDIInputDelay">Input Flight Delay Info </a>
+        </div>
+    </li>
 
-                <a class="dropdown-item" href="#" onclick="loadJoinUsParam('A')">Join us as an Auditor</a>
-                <a class="dropdown-item" href="#" onclick="loadUpdateMMAccParam('A')">Update Auditor Account</a>
-            </div>
-        </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Login / Logout
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" onclick="loadLoginParam()">Login</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" onclick="loadLogoutParam()" id="navLogout">Logout</a>
+        </div>
+    </li>
 
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Adm
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#" onclick="loadViewFactualNewsParamOpened('','','','loadNewsClickParam')" id="navViewlAllFactualNews">View All Factual News </a>
-                <a class="dropdown-item" href="#" onclick="loadConfigParam()">Config</a>
-                <a class="dropdown-item" href="#" onclick="loadKeys()">Keys</a>
-            </div>
-        </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Administration
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#"  onclick="loadViewFDIParam('',[],'','loadFDIClickParam')" id="navViewFDI">All Flight Delay Insurance - FDI </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" onclick="loadCreateUserParam()">Create a New User</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" onclick="loadUpdateMMAccParam()">Update an Account</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" onclick="loadConfigParam()">Config</a>
+        </div>
+    </li>
 
     </ul>
     <form class="form-inline my-2 my-lg-0">
             <b id="contractInfo"> SC - ERROR </b>
-            <input type="checkbox" name="syncMetaMask" id="syncMetaMask" value="">Sync MetaMask ? -  
+            <input type="checkbox" name="syncMetaMask" id="syncMetaMask" value="" checked="checked">Sync MetaMask ? -  
             <b id="loggedin"> ? </b>
     </form>
 </div>
-
-`;
-
-ui.viewFactualNews = `
-    <!-- View Factual News --> 
-
-`;
-
-ui.keys = `
-    <!-- Keys --> 
-
-    <br> REQUESTER 1 - 8726f64af11e65d42d4f78734391835c21c5fe2f6d5c9206a9abc4b8b9c737a0
-    <br> REQUESTER 2 - 8f14d0a4054c4d75a95a397657e10621a6a57d773401e719fe54c2d39079df8e
-    <br> REVIEWER 1 - b98eb064261534718be470f3aa2006fd0a865db2055786ba5bd05d24ab57602f
-    <br> REVIEWER 2 - 52b5564362c19910aedcaa6a9a747c98c0001ee77c84586350f1a12d8dfd6393
-    <br> AUDITOR 1 - e632491b32c923799b76fe171c065a9a336de352a3d255d0aa92ddbfe246d252
-    <br> AUDITOR 2 - ddd8495be3e6cc764b34ddf8562d47c38b81796d3373494c121730f9c893665b
-    <br> AUDITOR 3 - 899649aa86d062fb12586250783ec78a41d57fae90e6817fb8c5d5e4060b9313
-
-`;
-
-// JoinUs
-var loadKeys = function(){
-    target.innerHTML = ui.keys;
-}
-
-
-ui.JoinUs = `
-    <div class="card bg-light mb-3" style="max-width: 35rem;"  >
-        <div class="card-header" id="joinUsTitle"> Join_us </div>
-            <div class="card-body" id="joinUsBody">
-                Name: <br> <input type="input" id="addEmail" placeholder="" size=40>  <br>
-                MetaMask Account: <br> <input type="input" id="addMMAcount" placeholder="" value="<-MM->" size=60>  <br>
-                Password: <br> <input type="password" id="addPassword" placeholder="" >  <br>
-                Re-type your Password: <br> <input type="password" id="addPassword2" placeholder="" >  
-                <br><br>
-                <button type="button" class="btn btn-info" onclick="loadJoinUs()">Join us</button>
-        </div>        
-    </div>    
-
-`;
-
-ui.UpdateMMAccount = `
-    <div class="card bg-light mb-3" style="max-width: 35rem;"  >
-        <div class="card-header" id="updateMMAccTitle"> Update_MMAcc </div>
-            <div class="card-body" id="updateMMAccBody">
-                Name: <br> <input type="input" id="updateEmail" placeholder="" value="<-MMemail->" size=40>  <br>
-                MetaMask Account: <br> <input type="input" id="updateMMAcount" placeholder="" value="<-MM->" size=60>  <br>
-                Password: <br> <input type="password" id="updatePassword" placeholder="" >  <br>
-                <br><br>
-                <button type="button" class="btn btn-info" onclick="loadUpdateMMAcc()">Update MetaMask Account</button>
-        </div>        
-    </div>    
-
-`;
-
-ui.Config = `
-    <div class="card bg-light mb-3" style="max-width: 35rem;"  >
-        <div class="card-header" id="configTitle"> App Configuration </div>
-            <div class="card-body" id="configBody">
-                Ethereum Net - optional-: <br> <input type="input" id="configNet" placeholder="" value="<-NET->"size=40>  <br>
-                Smart Contract Address: <br> <input type="input" id="configSCAddr" placeholder="" value="<-ADDR->" size=60>  <br>
-                <br><br>
-                <button type="button" class="btn btn-info" onclick="loadConfig()">Update Configuration</button>
-        </div>        
-    </div>    
 
 `;
 
@@ -190,112 +116,146 @@ ui.tabCode = `
     <!-- Tab links -->
     <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'generalTab')" id="defaultOpen" >General Info</button>
-    <button class="tablinks" onclick="openTab(event, 'bodyRab')">News Body</button>
-    <button class="tablinks" onclick="openTab(event, 'reviewTab')">News Review</button>
+    <button class="tablinks" onclick="openTab(event, 'coverageTab')">Coverages</button>
+    <button class="tablinks" onclick="openTab(event, 'oracleTab')">ORACLE</button>
+    <button class="tablinks" onclick="openTab(event, 'configTab')">Config</button>
     </div>
 
     <!-- Tab content -->
     <div id="generalTab" class="tabcontent">
-        <-GI->
+        <-GT->
     </div>
 
-    <div id="bodyRab" class="tabcontent">
-        <-B->
+    <div id="coverageTab" class="tabcontent">
+        <-CT->
     </div>
 
-    <div id="reviewTab" class="tabcontent">
-        <-R->
+    <div id="oracleTab" class="tabcontent">
+        <-OT->
+    </div>
+
+    <div id="configTab" class="tabcontent">
+        <-FT->
     </div>
 `; 
+
 
 ui.default = `
     <!-- ------------- YOUR CODE: Default UI -------------  --> 
     <div class="card bg-light mb-3" style="max-width: 35rem;" >
-        <div class="card-header">Factual News Home </div>
+        <div class="card-header">Flight Insurance Delay Home </div>
         <div class="card-body">
-          <h5 class="card-title">Welcome ! Stay safe validating your news.</h5>
-          <img src="/factualnews.png" width="500" height="400" class="d-inline-block align-center" alt="">
+          <h5 class="card-title">Welcome ! Enjoy your hassle free coverage</h5>
+          <img src="/fdi.png" width="500" height="400" class="d-inline-block align-center" alt="">
         </div>
     </div>
 `; 
 
 ui.login = `
     <div class="card bg-light mb-3" style="max-width: 15rem;"  >
-        <div class="card-header">Factual News Login </div>
+        <div class="card-header">Login </div>
         <div class="card-body" id="loginBody">
-                Email: <br> <input type="input" id="loginEmail" value="originator1" >  <br>
-                Password: <br> <input type="password" id="loginPassword" value="o1" >  <br><br>
+                User ID: <br> <input type="input" id="loginUserId" value="" >  <br>
+                Password: <br> <input type="password" id="loginPassword" value="" >  <br><br>
                 <button type="button" class="btn btn-info" onclick="loginClick()">Log in</button>
         </div>        
     </div>    
 `;
 
-ui.createNewNews = `
-    <div class="card bg-light mb-3" style="max-width: 80rem;"  >
-        <div class="card-header">Factual News - New news review request </div>
-        <div class="card-body" id="createNewNewsBody">
-            <b>ID: - </b>  
-            <br> <br> <b>STATUS: - </b> <tr> BlanK 
-            <br><br> <b>TITLE: - </b>  
-            <br> <input type="input" id="newNewsTitle" size=120 value="" > 
-            <br><br> <b>BODY: - </b> 
-            <br> <input type="input" id="newNewsBody" size=120 value="" >   
-            <br><br>
-            <button type="button" class="btn btn-info" onclick="createNewNewsBlankClick()">Create</button>
+ui.Config = `
+    <div class="card bg-light mb-3" style="max-width: 35rem;"  >
+        <div class="card-header" id="configTitle"> App Configuration </div>
+            <div class="card-body" id="configBody">
+                Ethereum Net - optional-: <br> <input type="input" id="configNet" placeholder="" value="<-NET->"size=40>  <br>
+                Smart Contract Address: <br> <input type="input" id="configSCAddr" placeholder="" value="<-ADDR->" size=60>  <br>
+                <br>
+                Premium fee: <br> <input type="input" id="configPremiumFee" placeholder="" value="<-PR_FE->"size=40>  <br>
+                Number of Oracles: <br> <input type="input" id="configNumOra" placeholder="" value="<-NU_OR->" size=60>  <br>
+                Value per Minute Delayed: <br> <input type="input" id="configVaMinDelay" placeholder="" value="<-VA_MI_DE->" size=60>  <br>
+                Max Delay Minutes: <br> <input type="input" id="configMaxDeMin" placeholder="" value="<-MA_DE_MI->" size=60>  <br>
+                <br>
+                <button type="button" class="btn btn-info" onclick="loadConfig()">Update Configuration</button>
         </div>        
     </div>    
-`
-//            <br> <input type="input" id="newNewsId" value="GH25454241FB300" > 
-;
+`;
 
-ui.newsAddFundsParam = `
-    <div class="card-body" id="newsAddFundsParam">
+ui.CreateUser = `
+    <div class="card bg-light mb-3" style="max-width: 35rem;"  >
+        <div class="card-header" id="createUserTitle"> Create a New User </div>
+            <div class="card-body" id="createUserBody">
+                Name: <br> <input type="input" id="createUserId" placeholder="" size=40>  <br>
+                MetaMask Account: <br> <input type="input" id="createUserMMAcount" placeholder="" value="<-MM->" size=60>  <br>
+                Password: <br> <input type="password" id="createUserPassword" placeholder="" >  <br>
+                Re-type your Password: <br> <input type="password" id="createUserPassword2" placeholder="" >  <br>
+                User type: <br> 
+                <input type="radio" name="createUserType" id="createUserTypePassenger" value="P" checked="checked">Passenger 
+                <input type="radio" name="createUserType" id="createUserTypeInsurer" value="I" >Insurer 
+                <input type="radio" name="createUserType" id="createUserTypeOracle" value="O" >Trusted Oracle 
+                <br><br>
+                <button type="button" class="btn btn-info" onclick="loadCreateUser()">Create User</button>
+        </div>        
+    </div>    
+
+`;
+
+ui.UpdateMMAccount = `
+    <div class="card bg-light mb-3" style="max-width: 35rem;"  >
+        <div class="card-header" id="updateMMAccTitle"> Update_MMAcc </div>
+            <div class="card-body" id="updateMMAccBody">
+                Name: <br> <input type="input" id="updateUserId" placeholder="" value="<-MMuserId->" size=40>  <br>
+                MetaMask Account: <br> <input type="input" id="updateMMAcount" placeholder="" value="<-MM->" size=60>  <br>
+                Password: <br> <input type="password" id="updatePassword" placeholder="" >  <br>
+                <br><br>
+                <button type="button" class="btn btn-info" onclick="loadUpdateMMAcc()">Update MetaMask Account</button>
+        </div>        
+    </div>    
+
+`;
+
+ui.buyFDIParam = `
+    <div class="card-body" id="buyFDIParam">
         <br>
-        <b>FUNDS TO BE ADDED (ETH): </b>  
-        <br> <input type="input" id="addFundsAmount" value="0.01" > <b>  </b> 
+        <b>DO YOU WANT TO BUY THIS COVERAGE ? : </b>  
         <br>
-        <button type="button" class="btn btn-info" onclick="newsAddFundsClick()">Add Funds</button>
+        <br> Cost: <-FDICost-> 
+        <button type="button" class="btn btn-info" onclick="buyFDIClick()">Confirm</button>
     </div>        
 `;
 
-ui.applyReviewParam = `
-    <div class="card-body" id="applyReviewParam">
+ui.inputDelayParam = `
+    <div class="card-body" id="inputDelayParam">
         <br>
-        <button type="button" class="btn btn-info" onclick="applyReviewClick()">Apply to review this News</button>
+        <b>IS THIS FLIGHT DELAYED: </b> 
+            <input type="radio" name="optDelayed" id="optDelayedYes" value="Yes">Yes
+            <input type="radio" name="optDelayed" id="optDelayedNo" value="No" checked="checked">NO 
+        <br>
+        <br> 
+        <b>IF DELAYED, HOW LONG? </b>  
+        <br> <input type="input" id="inputDelayValue" value="0" > <b>  minutes
+        <br>
+        <br>
+        <button type="button" class="btn btn-info" onclick="inputDelayClick()">Confirm</button>
     </div>        
 `;
 
-ui.applyAuditParam = `
-    <div class="card-body" id="applyAuditParam">
-        <br>
-        <button type="button" class="btn btn-info" onclick="applyAuditClick()">Apply to audit this News</button>
-    </div>        
-`;
-
-ui.approveRevAudParam = `
-    <div class="card-body" id="approveRevAudParam">
-        <br>
-        <button type="button" class="btn btn-info" onclick="approveRevAudClick()">Approve Reviewer and Auditors for this News</button>
-    </div>        
-`;
-
-ui.completeReviewParam = `
-    <div class="card-body" id="completeReviewParam">
-        <br>
-        <b>ADD YOUR REVIEW TEXT: </b>  
-        <br> <input type="input" id="reviewBody" value="" size=120 > <b>  </b> 
-        <br> <br>
-        <button type="button" class="btn btn-info" onclick="completeReviewClick()">Complete the review proces for this News</button>
-    </div>        
-`;
-
-ui.approveDenyParam = `
-    <div class="card-body" id="approveDenyParam">
-        <br>
-        <button type="button" class="btn btn-info" onclick="approveReviewClick()">Approve Review</button> 
-        <b> OR </b>  
-        <button type="button" class="btn btn-info" onclick="denyReviewClick()">Deny Review</button>
-    </div>        
+ui.createNewFDI = `
+    <div class="card bg-light mb-3" style="max-width: 80rem;"  >
+        <div class="card-header">New Flight Delay Insurance </div>
+        <div class="card-body" id="createNewFDI">
+            <b>ID: - </b>  
+            <input type="input" id="newFDIID" size=40 value="" > 
+            <br> <br> 
+            <b>STATUS: - </b> <tr> Open 
+            <br><br> 
+            <b>TOTAL COMPENSATION: - </b>  
+            <input type="input" id="newFDIFunds" size=20 value="0.0" > 
+            <br><br> 
+            <b>MAXIMUM NUMBER OF COVERAGES: - </b>  
+            <input type="input" id="newFDICoverageNum" size=20 value="0" > >   
+            <br><br>
+            <button type="button" class="btn btn-info" onclick="createNewFDIClick()">Create</button>
+        </div>        
+    </div>    
 `;
 
 var target     = document.getElementById('target');
@@ -305,140 +265,12 @@ var contractInfo;
 var activeNavButton;
 var lastRetMsg;
 var lastRetObj;
-var currentLoginType = "";
-var currentUser;
-var currentNews = null;
+var currentUser = null;
+var currentFDI = null;
 var lastViewParam = null;
-var joinUsUserType = "";
 var updateMMAccUserType = "";
 
 navigation.innerHTML += ui.navigation;
-
-var setActiveNavBar = function(id){
-    // set active marker
-    activeNavButton.classList.remove("active");
-    activeNavButton = document.getElementById(id);
-    activeNavButton.classList.add("active");
-}
-
-var loadViewFactualNewsParamOpened = function(userName,userType,newsStatus,detailFunctionName){
-
-    if (userName != '') {
-        target.innerHTML = "FAILURE: No user logged in ...";
-        return;
-    }
-
-    loadViewFactualNewsParamInternal(userName,userType,newsStatus,detailFunctionName);
-}
-
-
-var loadViewFactualNewsParam = function(userName,userType,newsStatus,detailFunctionName){
-
-    if ((userType != '') && (isEmpty(currentUser)) ) {
-            target.innerHTML = "FAILURE: No user logged in ...";
-            return;
-    }
-    if ((userType != '') && (!isEmpty(currentUser)) ) {
-        if (userType != currentUser.type) {
-            target.innerHTML = "FAILURE: No user logged in ...";
-            return;
-        }
-    }
-    if (userName != '') {
-        if (isEmpty(currentUser))  {
-            target.innerHTML = "FAILURE: No user logged in ...";
-            return;
-        }
-        userName = currentUser.email;            
-    }
-
-
-    if (userName == '') {
-        userType = '';
-    }
-    
-    loadViewFactualNewsParamInternal(userName,userType,newsStatus,detailFunctionName);
-
-}
-
-var loadViewFactualNewsParamInternal = function(userName,userType,newsStatus,detailFunctionName) {
-    var viewParam = { "userName": '', "userType": '', "newsStatus": [] , "detailFunctionName": '' };
-
-    if (userName != '') {
-        userName = currentUser.email;
-    }
-    viewParam.userName = userName;
-    viewParam.userType = userType;
-    if (newsStatus != '')
-       viewParam.newsStatus = newsStatus;
-    if (detailFunctionName == '') {
-        detailFunctionName = 'loadNewsClickParam';
-    }
-    viewParam.detailFunctionName = detailFunctionName;
-    setActiveNavBar("navViewlAllFactualNews");
-    lastViewParam = viewParam;
-    loadViewFactualNewsAPI(viewParam);
-};
-
-var loadViewFactualNews = function(){
-    var news;
-
-    if (lastRetMsg.includes('FAILURE')) {
-        target.innerHTML = lastRetMsg;
-    } 
-    else {
-        news = lastRetObj;
-        target.innerHTML = allNewsTablify(news);
-    }
-};
-
-var loadCreateNewNewsParam = function() {
-    if (isEmpty(currentUser))  {
-        target.innerHTML = "FAILURE: No user logged in ...";
-        return;
-    }
-    if (currentUser.type != 'O') {
-        target.innerHTML = "FAILURE: No user logged in ...";
-        return;
-    }
-
-    target.innerHTML = ui.createNewNews;
-}
-
-async function createNewNewsBlankClick() {
-    var news = {id          : '',
-                status      : '', 
-                title       : '',
-                newsBody    : '',
-                newsRev     : '',
-                originator  : '',
-                reviewer    : '',
-                auditors    : [] , 
-                funds       : 0  ,
-                auditorsApprovalStatus    : [] };
-    if ( isEmpty(currentUser)) {
-        target.innerHTML = "FAILURE: No user logged in ...";
-        return;
-    }
-            
-            
-   // news.id = document.getElementById('newNewsId').value;
-    news.id = generateId();
-    news.status = "Blank";
-    news.title = document.getElementById('newNewsTitle').value;
-    news.newsBody = document.getElementById('newNewsBody').value;
-    news.originator = currentUser.email;
-    news.funds = 0;
-
-    let msg = await createRequestFNAPI(news.id);
-    if (!msg.includes("SUCCESS")) {
-        target.innerHTML = "FAILURE: News request was not created ..." + msg;
-        return;
-    }
-
-    loadCreateNewNewsAPI(news);
-   
-}
 
 var defaultModule = function(){
     target.innerHTML = ui.default;
@@ -470,430 +302,277 @@ function putAnchor(str,funcAnchor,param) {
     return ret;
 }
 
-function allNewsTablify(news) {
+function allFDITablify(FDIs) {
     var len;
     var html = "";
     
-    if (!isEmpty(news)) {
-        len = news.length;
+    if (!isEmpty(FDIs)) {
+        len = FDIs.length;
         for (var i=0; i < len; i++) {
-            html += '<br>' + putAnchor(retDefaultStr(news[i].title,"NO TITLE"),lastViewParam.detailFunctionName,"\'"+news[i].id+"\'") + ' - ' + 
-                             retDefaultStr(news[i].originator,"NO TITLE") + ' - ' + news[i].status + ' - ' + toMoney(news[i].funds);
+            html += '<br>' + putAnchor(retDefaultStr(FDIs[i].id,"NO TITLE"),lastViewParam.detailFunctionName,"\'"+FDIs[i].id+"\'") 
+               + ' - ' + FDIs[i].status + ' - ' + FDIs[i].coverageNum;
         }
     }
     return html;
 }
 
-function showUrlBody(title,body) {
-    var html = '';
-    var str;
-
-    html +=  '<b>' + title + ':  </b>';
-    var str = JSON.stringify(body);
-    if (str.includes("http")) {
-/*            html +=  `<object data=`;
-        html += news.newsBody;
-        html +=  ` width=”650″ height=”500″> <embed src=`;
-        html += news.newsBody;
-        html +=  ` width=”650″ height=”500″> </embed></object>`; */
-
-        html += `<a href="` ;
-        html += body;
-        html += `" target="_blank">Link</a>`;
-
-        html +=  `
-                    <iframe id="` + title + `" width="1200" height="450" frameborder="0" title="description" src="`
-        html += body;
-        html += `" > </iframe>
-                `;               
-    }
-    else {
-        html += body;
-    }    
-    return html;
-}
-
-function oneNewsTablify(news) {
+function oneFDITablify(FDI) {
     var len;
     var html = "";
-    var htmlGI = "";
-    var htmlB = "";
-    var htmlR = "";
     var param;
+    var htmlGT,htmlCT,htmlOT,htmlFT;
     
-    if (!isEmpty(news)) {
-        if (lastViewParam.userName != '') {
-            param = "\'Current\',";
+    if (!isEmpty(FDI)) {
+        if (lastViewParam.id != '') {
+            param = "\'" + lastViewParam.id + "\',";
         }
         else {
             param = "\'\',"
         }
-        param += "\'" + lastViewParam.userType + "\',";
         param += "[";
-        var len = lastViewParam.newsStatus.length;
+        var len = lastViewParam.statusList.length;
         for (i=0;i<len;i++) {
-            param += "\'" + lastViewParam.newsStatus[i] + "\'";
+            param += "\'" + lastViewParam.statusList[i] + "\'";
             if (i<(len-1)) {
                 param += " , ";
             }
         }
         param += "],";
+        param += "\'\',";
         param += "\'" + lastViewParam.detailFunctionName + "\'";
         
-        html += putAnchor("Back","loadViewFactualNewsParam",param);
+        html += putAnchor("Back","loadViewFDIParam",param);
 
         html += '<br><br>';
+
         html += ui.tabCode;
 
-        htmlGI += '<b>ID:</b>' + ' - ' + news.id;
+        htmlGT = '<b>Flight Delay Insurance - FDI - Details<b>';
 
-        htmlGI += '' + '<b> STATUS:</b>' + ' - ' + news.status;
+        htmlGT += '<br><br>';
 
-        htmlGI += '' + '<b> FUNDS:</b>' + ' - ' + toMoney(news.funds);
+        htmlGT += '<b>ID:</b>' + ' - ' + FDI.id;
 
-        htmlGI += '<br><br>' + '<b>TITLE:</b>' + 
-                ' ' + news.title;
+        htmlGT += '<br>';
 
-        htmlB += showUrlBody("NEWS BODY",news.newsBody);
+        htmlGT += '' + '<b> STATUS:</b>' + ' - ' + FDI.status;
 
-        htmlR += showUrlBody("NEWS REVIEW",news.newsRev);
+        htmlGT += '<br>';
 
-        htmlGI += '<br><br>' + '<b>REQUESTER:</b>' + 
-                '<br> ' + news.originator;
+        htmlGT += '' + '<b> AVAILABLE COVERAGES:</b>' + ' - ' + FDI.coverageNum;
 
-        htmlGI += '<br>' + '<b>REVIEWER:</b>' + 
-                '<br> ' + news.reviewer;
+        htmlGT += '<br><br>';
+
+        htmlCT = '<br>';
+
+        htmlCT += JSON.stringify(FDI.coverages);
+
+        htmlCT += '<br><br>';
+
+        htmlOT = '<br>';
+
+        htmlOT += JSON.stringify(FDI.oracleInputDelay);
+
+        htmlOT += '<br><br>';
+
+        htmlFT = '<b>Flight Delay Insurance - FDI - Config Data<b>';
+
+        htmlFT += '<br><br>';
+
+        htmlFT += '<b>oracleNum: </b>' + FDI.oracleNum;
+
+        htmlFT += '<br>';
+
+        htmlFT += '' + '<b> valuePerMinute:</b>' +  FDI.valuePerMinute;
+
+        htmlFT += '<br>';
+
+        htmlFT += '' + '<b> maxMinutes:</b>' + FDI.maxMinutes;
+
+        htmlFT += '<br>';
+
+        htmlFT += '' + '<b> premiumFee:</b>' + FDI.premiumFee;
         
-        htmlGI += '<br>' + '<b>AUDITORS:</b>';
-        if (!isEmpty(news.auditors)) {
-            len = news.auditors.length;
-            for (var i=0; i < len; i++) {
-                htmlGI += '<br> ' + news.auditors[i];
-            }                    
-        }
+        htmlFT += '<br><br>';
     }
 
-    html = html.replace("<-GI->",htmlGI);
-    html = html.replace("<-B->",htmlB);
-    html = html.replace("<-R->",htmlR);
+    html = html.replace("<-GT->",htmlGT);
+    html = html.replace("<-CT->",htmlCT);
+    html = html.replace("<-OT->",htmlOT);
+    html = html.replace("<-FT->",htmlFT);
+
     return html;
 }
 
-var loadNewsClickParam = function(id){
-    loadNewsAPI(id,loadNewsClick);
+var setActiveNavBar = function(id){
+    // set active marker
+    activeNavButton.classList.remove("active");
+    activeNavButton = document.getElementById(id);
+    activeNavButton.classList.add("active");
 }
 
-var loadNewsClick = function(){
-    var news;
+var loadViewFDIParam = function(id,statusList,insurer,detailFunctionName){
+
+    loadViewFDIParamInternal(id,statusList,insurer,detailFunctionName);
+}
+
+var loadViewFDIParamInternal = function(id,statusList,insurer,detailFunctionName) {
+    var viewParam = { "id": '',  "statusList": [] ,"insurer": '',  "detailFunctionName": '' };
+
+    viewParam.id = id;
+    viewParam.statusList = statusList;
+    if (insurer == '<CurrentUser>') {
+        viewParam.insurer = currentUser.userId;
+    }
+    if (detailFunctionName == '') {
+        detailFunctionName = 'loadFDIClickParam';
+    }
+    viewParam.detailFunctionName = detailFunctionName;
+    lastViewParam = viewParam;
+    loadViewFDIAPI(viewParam);
+};
+
+var loadViewFDI = function(){
+    var FDIids;
 
     if (lastRetMsg.includes('FAILURE')) {
         target.innerHTML = lastRetMsg;
     } 
     else {
-        news = lastRetObj;
-        target.innerHTML = oneNewsTablify(news);
-        document.getElementById("defaultOpen").click();
+        FDIids = lastRetObj;
+        target.innerHTML = allFDITablify(FDIids);
     }
 };
 
-// ADD FUNDS 
-var loadAddFundsNewsClickParam = function(id) {
-    loadNewsAPI(id,loadAddFundsNewsClick);    
+var loadFDIClickParam = function(id) {
+
+    loadFDIAPI(id,loadFDIClick);    
 }
 
-var loadAddFundsNewsClick = function(){
-    var news;
+var loadFDIClick = function(){
+    var FDI;
     var html;
 
     if (lastRetMsg.includes('FAILURE')) {
         target.innerHTML = lastRetMsg;
     } 
     else {
-        news = lastRetObj;
-        html = oneNewsTablify(news);
-        html += ui.newsAddFundsParam;
+        FDI = lastRetObj;
+        html = oneFDITablify(FDI);
         target.innerHTML = html;
         document.getElementById("defaultOpen").click();
     }
 };
 
-async function newsAddFundsClick() {
-    var amount = Number(document.getElementById('addFundsAmount').value);
-
-    if (isNaN(amount)) {
-        alert("Funds needs to be a valid number !");
-        return;
-    }
+var loadConfigParam = function(){
+    var html = ui.Config;
     
-    if (amount <=0) {
-        alert("Funds needs to be greater than zero !");
+    html = html.replace("<-NET->",configData.network);
+    html = html.replace("<-ADDR->",configData.contractAddress);
+    html = html.replace("<-PR_FE->",configData.premiumFee);
+    html = html.replace("<-NU_OR->",configData.oracleNum);
+    html = html.replace("<-VA_MI_DE->",configData.valuePerMinute);
+    html = html.replace("<-MA_DE_MI->",configData.maxMinutes);
+
+    target.innerHTML = html;
+}
+
+async function loadConfig() {
+    var configParam = { id: 1, network: "Rinkeby",
+                        contractAddress: contractAddress,
+                        oracleNum: 3,
+                        valuePerMinute: 0.1,
+                        maxMinutes: 120,
+                        premiumFee: 1 } ;
+
+    configParam.network = document.getElementById('configNet').value;
+    configParam.contractAddress = document.getElementById('configSCAddr').value;
+
+    if (isNaN(document.getElementById('configNumOra').value)) {
+        alert("Number of Oracles needs to be a valid number !");
+        return;
+    }
+    configParam.oracleNum = Number(document.getElementById('configNumOra').value);
+
+    if (isNaN(document.getElementById('configVaMinDelay').value)) {
+        alert("Value per minute delayed needs to be a valid number !");
+        return;
+    }
+    configParam.valuePerMinute = Number(document.getElementById('configVaMinDelay').value);
+
+    if (isNaN(document.getElementById('configMaxDeMin').value)) {
+        alert("Maximum Delayed Minutes delayed needs to be a valid number !");
+        return;
+    }
+    configParam.maxMinutes = Number(document.getElementById('configMaxDeMin').value);
+
+    if (isNaN(document.getElementById('configPremiumFee').value)) {
+        alert("Premium fee needs to be a valid number !");
+        return;
+    }
+    configParam.premiumFee = Number(document.getElementById('configPremiumFee').value);
+
+    if (configParam.contractAddress == "")  {
+        alert("Required parameters can not be blank !");
         return;
     }
 
-    var msg = await addReviewFundsFNAPI(currentNews.id,amount);
+    var msg = await setConfigContractAPI(configParam);
     if (!msg.includes("SUCCESS")) {
         target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
         return;
     }
 
-    addFundsNewsAPI(currentNews.id,amount);
+    setConfigDataAPI(configParam,loadConfigProcess);
 }
 
-var newsAddFundsProcess = function() {
-    var msgRetArea = document.getElementById('newsAddFundsParam');
+var loadConfigProcess = function() {
+    var msgRetArea = document.getElementById('configBody');
 
     if (lastRetMsg.includes('FAILURE')) {
         msgRetArea.innerHTML = lastRetMsg;
     } 
     else {
-        msgRetArea.innerHTML = lastRetMsg;
+        configData = lastRetObj;
+        msgRetArea.innerHTML = "SUCCESS: ConfigData was update successfully ! ";
+        setupWeb3(configData,callbackFunctionAccountChanged,callbackProcessSetWeb3,false);
     }
 }
- 
-// APPLY FOR A REVIEW
-var loadApplyForReviewClickParam = function(id) {
-    loadNewsAPI(id,loadApplyForReviewClick);    
-}
 
-var loadApplyForReviewClick = function(){
-    var news;
-    var html;
+function callbackSetupWeb3API() {
 
-    if (lastRetMsg.includes('FAILURE')) {
-        target.innerHTML = lastRetMsg;
+    if (!lastRetMsg.includes('FAILURE')) {
+        configData = lastRetObj;
+        setupWeb3(configData,callbackFunctionAccountChanged,callbackProcessSetWeb3,true);
     } 
-    else {
-        news = lastRetObj;
-        html = oneNewsTablify(news);
-        html += ui.applyReviewParam;
-        target.innerHTML = html;
-        document.getElementById("defaultOpen").click();
-    }
-};
-
-async function applyReviewClick() {
-    
-    var msg = await applyForReviewFNAPI(currentNews.id);
-    if (!msg.includes("SUCCESS")) {
-        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
-        return;
-    }
-
-    applyReviewAPI(currentNews.id,currentUser.email);
 }
 
-var applyReviewProcess = function() {
-    var msgRetArea = document.getElementById('applyReviewParam');
+var callbackFunctionAccountChanged = function(newAccount) {
+    var syncAccount = document.getElementById('syncMetaMask').checked;
 
-    if (lastRetMsg.includes('FAILURE')) {
-        msgRetArea.innerHTML = lastRetMsg;
+    if (syncAccount) {
+        loginMetaMaskChanged(newAccount);
+    }
+ }
+
+function callbackProcessSetWeb3(msg) {
+    contractInfo.innerHTML = "Contract - " + msg + " - ";    
+}
+
+function callbackSetupConfigData() {
+
+    if (!lastRetMsg.includes('FAILURE')) {
+        configData = lastRetObj;
     } 
-    else {
-        msgRetArea.innerHTML = lastRetMsg;
-    }
 }
 
-// APPLY FOR A AUDIT
-function loadApplyForAuditClickParam(id) {
-    loadNewsAPI(id,loadApplyForAuditClick);    
-}
-
-var loadApplyForAuditClick = function(){
-    var news;
-    var html;
-
-    if (lastRetMsg.includes('FAILURE')) {
-        target.innerHTML = lastRetMsg;
-    } 
-    else {
-        news = lastRetObj;
-        html = oneNewsTablify(news);
-        html += ui.applyAuditParam;
-        target.innerHTML = html;
-        document.getElementById("defaultOpen").click();
-    }
-};
-
-async function applyAuditClick() {
-    var msg = await applyForAuditingFNAPI(currentNews.id);
-    if (!msg.includes("SUCCESS")) {
-        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
-        return;
-    }
-
-    applyAuditAPI(currentNews.id,currentUser.email);
-}
-
-var applyAuditProcess = function() {
-    var msgRetArea = document.getElementById('applyAuditParam');
-
-    if (lastRetMsg.includes('FAILURE')) {
-        msgRetArea.innerHTML = lastRetMsg;
-    } 
-    else {
-        msgRetArea.innerHTML = lastRetMsg;
-    }
-}
-
-// APPROVE REVIEWER AND AUDITORS
-var loadApproveRevAudClickParam = function(id) {
-    loadNewsAPI(id,loadApproveRevAudClick);    
-}
-
-var loadApproveRevAudClick = function(){
-    var news;
-    var html;
-
-    if (lastRetMsg.includes('FAILURE')) {
-        target.innerHTML = lastRetMsg;
-    } 
-    else {
-        news = lastRetObj;
-        html = oneNewsTablify(news);
-        html += ui.approveRevAudParam;
-        target.innerHTML = html;
-        document.getElementById("defaultOpen").click();
-    }
-};
-
-async function approveRevAudClick() {
-    var msg = await approveReviewerAuditorsFNAPI(currentNews.id);
-    if (!msg.includes("SUCCESS")) {
-        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
-        return;
-    }
-
-    approveRevAudAPI(currentNews.id);
-}
-
-var approveRevAudProcess = function() {
-    var msgRetArea = document.getElementById('approveRevAudParam');
-
-    if (lastRetMsg.includes('FAILURE')) {
-        msgRetArea.innerHTML = lastRetMsg;
-    } 
-    else {
-        msgRetArea.innerHTML = lastRetMsg;
-    }
-}
-
-
-// COMPLETE A REVIEW
-var loadCompleteReviewClickParam = function(id) {
-    loadNewsAPI(id,loadCompleteReviewClick);    
-}
-
-var loadCompleteReviewClick = function(){
-    var news;
-    var html;
-
-    if (lastRetMsg.includes('FAILURE')) {
-        target.innerHTML = lastRetMsg;
-    } 
-    else {
-        news = lastRetObj;
-        html = oneNewsTablify(news);
-        html += ui.completeReviewParam;
-        target.innerHTML = html;
-        document.getElementById("defaultOpen").click();
-    }
-};
-
-async function completeReviewClick() {
-    currentNews.newsRev = document.getElementById('reviewBody').value;
-    
-    if (currentNews.newsRev == "") {
-        alert("Input some review text !");
-        return;
-    }
-
-    var msg = await finishReviewFNAPI(currentNews.id);
-    if (!msg.includes("SUCCESS")) {
-        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
-        return;
-    }
-
-    completeReviewAPI(currentNews.id,currentNews);
-}
-
-var completeReviewProcess = function() {
-    var msgRetArea = document.getElementById('completeReviewParam');
-
-    if (lastRetMsg.includes('FAILURE')) {
-        msgRetArea.innerHTML = lastRetMsg;
-    } 
-    else {
-        msgRetArea.innerHTML = lastRetMsg;
-    }
-}
-
-// APPROVE OR DENY REVIEW
-var loadApproveDenyReviewClickParam = function(id) {
-    loadNewsAPI(id,loadApproveDenyReviewClick);    
-}
-
-var loadApproveDenyReviewClick = function(){
-    var news;
-    var html;
-
-    if (lastRetMsg.includes('FAILURE')) {
-        target.innerHTML = lastRetMsg;
-    } 
-    else {
-        news = lastRetObj;
-        html = oneNewsTablify(news);
-        html += ui.approveDenyParam;
-        target.innerHTML = html;
-        document.getElementById("defaultOpen").click();
-    }
-};
-
-async function approveReviewClick() {
-    var msg = await auditReviewFNAPI(currentNews.id,"Approved");
-    if (!msg.includes("SUCCESS")) {
-        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
-        return;
-    }
-
-    approveReviewAPI(currentNews.id,currentUser.email);
-}
-
-var approveReviewProcess = function() {
-    var msgRetArea = document.getElementById('approveDenyParam');
-
-    if (lastRetMsg.includes('FAILURE')) {
-        msgRetArea.innerHTML = lastRetMsg;
-    } 
-    else {
-        msgRetArea.innerHTML = lastRetMsg;
-    }
-}
-
-async function denyReviewClick() {
-    var msg = await auditReviewFNAPI(currentNews.id,"Denied");
-    if (!msg.includes("SUCCESS")) {
-        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
-        return;
-    }
-
-    denyReviewAPI(currentNews.id,currentUser.email);
-}
-
-var denyReviewProcess = function() {
-    var msgRetArea = document.getElementById('approveDenyParam');
-
-    if (lastRetMsg.includes('FAILURE')) {
-        msgRetArea.innerHTML = lastRetMsg;
-    } 
-    else {
-        msgRetArea.innerHTML = lastRetMsg;
-    }
+function getConfigData(callbackfunction) {
+    getConfigDataAPI(callbackfunction);
 }
 
 // LOGIN
-var loadLoginParam = function(loginType) {
+var loadLoginParam = function() {
 
-    currentLoginType = loginType;
     target.innerHTML = ui.login;
 
 }
@@ -904,19 +583,19 @@ function setLoggedUser(user) {
 
     if (!isEmpty(user)) {
         switch (user.type) {
+            case 'P' :
+                str = 'PASSENGER - ';
+                break;
+            case 'I' :
+                str = 'INSURER - ';
+                break;
             case 'O' :
-                str = 'REQUESTER - ';
-                break;
-            case 'R' :
-                str = 'REVIEWER - ';
-                break;
-            case 'A' :
-                str = 'AUDITOR - ';
+                str = 'ORACLE - ';
                 break;
             default:
                 str = '';
         }
-        str += user.email;
+        str += user.userId;
         loggedin.innerHTML = str;    
         ret = true;
     }
@@ -927,12 +606,16 @@ function setLoggedUser(user) {
 }
 
 var loginClick = function(){
-    var user = { "email" : '', "password" : '' , "type": '' };
+    var user = { 
+        userId      : '',
+        password    : '',
+        MMAccount   : '',
+        type        : ''   // 'P' -> Passenger , 'I' -> Insurer , 'O' -> Oracle 
+    };       
 
-    user.email = document.getElementById('loginEmail').value;
-    user.email = user.email.toUpperCase();
+    user.userId = document.getElementById('loginUserId').value;
+    user.userId = user.userId.toUpperCase();
     user.password = document.getElementById('loginPassword').value;
-    user.type = currentLoginType;
 
     loadLoginAPI(user);
 }
@@ -957,46 +640,7 @@ var loadLogoutParam = function() {
         alert("You must be logged in to perform this operation !");
         return;
     }
-    lastRetMsg = "SUCCESS: " + currentUser.email + " is logged out";
-    lastRetObj = null;
-    currentUser = null
-    target.innerHTML = lastRetMsg;
-    loggedin.innerHTML = "-"
-
-}
-
-var loginClick = function(){
-    var user = { "email" : '', "password" : '' , "type": '' , "MMAccount": ''};
-
-    user.email = document.getElementById('loginEmail').value;
-    user.email = user.email.toUpperCase();
-    user.password = document.getElementById('loginPassword').value;
-    user.type = currentLoginType;
-
-    loadLoginAPI(user);
-}
-
-var loadLogin = function() {
-
-    if (lastRetMsg.includes('FAILURE')) {
-        target.innerHTML = lastRetMsg;
-        currentUser = null;
-        setLoggedUser(currentUser);
-    } 
-    else {
-        target.innerHTML = "User logged in !";
-        currentUser = lastRetObj;
-        setLoggedUser(currentUser);
-    }
-}
-
-var loadLogoutParam = function() {
-
-    if (isEmpty(currentUser)) {
-        alert("You must be logged in to perform this operation !");
-        return;
-    }
-    lastRetMsg = "SUCCESS: " + currentUser.email + " is logged out";
+    lastRetMsg = "SUCCESS: " + currentUser.userId + " is logged out";
     lastRetObj = null;
     currentUser = null
     target.innerHTML = lastRetMsg;
@@ -1005,7 +649,12 @@ var loadLogoutParam = function() {
 }
 
 var loginMetaMaskChanged = function(newMMAccount){
-    var user = { "email" : '', "password" : '' , "type": '' , "MMAccount": ''};
+    var user = { 
+        userId      : '',
+        password    : '',
+        MMAccount   : '',
+        type        : ''   // 'P' -> Passenger , 'I' -> Insurer , 'O' -> Oracle 
+    };       
 
     user.MMAccount = newMMAccount;
 
@@ -1024,68 +673,64 @@ var loadLoginMetaMask = function() {
         currentUser = lastRetObj;
         setLoggedUser(currentUser);
     }
+    if (firstTimeAccountChanged) {
+        firstTimeAccountChanged = false;
+        defaultModule();
+    }
 }
 
-var loadLogoutParam = function() {
+// CreateUser
+var loadCreateUserParam = function(){
+    var html = ui.CreateUser;
 
-    if (isEmpty(currentUser)) {
-        alert("You must be logged in to perform this operation !");
-        return;
-    }
-    lastRetMsg = "SUCCESS: " + currentUser.email + " is logged out";
-    lastRetObj = null;
-    currentUser = null
-    target.innerHTML = lastRetMsg;
-    loggedin.innerHTML = "-"
-
-}
-
-// JoinUs
-var loadJoinUsParam = function(userType){
-    var html = ui.JoinUs;
-
-    joinUsUserType = userType;
-    switch (userType) {
-        case 'O':
-            html = html.replace("Join_us","Join us as Requester");
-            break
-        case 'R':
-            html = html.replace("Join_us","Join us as Reviewer");
-            break;
-        case 'A':
-            html = html.replace("Join_us","Join us as Auditor");    
-            break;
-        default:
-            html = html.replace("Join_us","Join us ??? ");
-            break;
-    }
     html = html.replace("<-MM->",currentMAAccount);
     target.innerHTML = html;
 }
 
-var loadJoinUs = function() {
-    var email = document.getElementById('addEmail').value;
-    var password = document.getElementById('addPassword').value;
-    var passwordReType = document.getElementById('addPassword2').value;
-    var MMAccount = document.getElementById('addMMAcount').value;
+var loadCreateUser = function() {
+    var user = { 
+        userId      : '',
+        password    : '',
+        MMAccount   : '',
+        type        : ''   // 'P' -> Passenger , 'I' -> Insurer , 'O' -> Oracle 
+    };       
 
-    if ((email == "") || (password == "") || (passwordReType == "")) {
+    user.userId = document.getElementById('createUserId').value;
+    user.password = document.getElementById('createUserPassword').value;
+    var passwordReType = document.getElementById('createUserPassword2').value;
+    user.MMAccount = document.getElementById('createUserMMAcount').value;
+    if (document.getElementById('createUserTypePassenger').checked) {
+        user.type = document.getElementById('createUserTypePassenger').value;
+    }
+    else if (document.getElementById('createUserTypeInsurer').checked) {
+        user.type = document.getElementById('createUserTypeInsurer').value;
+    }
+    else if (document.getElementById('createUserTypeOracle').checked) {
+        user.type = document.getElementById('createUserTypeOracle').value;
+    }
+
+    if ((user.userId == "") || (user.password == "") || (passwordReType == "")) {
         alert("Required parameters can not be blank !");
         return;
     }
     
-    if ((password != passwordReType)) {
+    if ((user.type == "")) {
+        alert("Select a user type !");
+        return;
+    }
+    
+    if ((user.password != passwordReType)) {
         alert("Passwords do NOT match !");
         return;
     }
     
-    email = email.toUpperCase();
+    user.userId = user.userId.toUpperCase();
 
-    loadJoinUsAPI(email,password,joinUsUserType,MMAccount);
+    loadCreateUserAPI(user);
 }
 
-var loadJoinUsProcess = function() {
-    var msgRetArea = document.getElementById('joinUsBody');
+var loadCreateUserProcess = function() {
+    var msgRetArea = document.getElementById('createUserBody');
 
     if (lastRetMsg.includes('FAILURE')) {
         msgRetArea.innerHTML = lastRetMsg;
@@ -1098,47 +743,37 @@ var loadJoinUsProcess = function() {
 var loadUpdateMMAccParam = function(userType){
     var html = ui.UpdateMMAccount;
 
-    updateMMAccUserType = userType;
-    switch (userType) {
-        case 'O':
-            html = html.replace("Update_MMAcc","Update MetaMask REQUESTER Account");
-            break
-        case 'R':
-            html = html.replace("Update_MMAcc","Update MetaMask REVIEWER Account");
-            break;
-        case 'A':
-            html = html.replace("Update_MMAcc","Update MetaMask AUDITOR Account");    
-            break;
-        default:
-            html = html.replace("Update_MMAcc","Update MetaMask ??? Account");
-            break;
-    } 
     if (!isEmpty(currentUser)) {
-        html = html.replace("<-MMemail->",currentUser.email);
+        html = html.replace("<-MMuserId->",currentUser.userId);
     }
     else {
-        html = html.replace("<-MMemail->","");
+        html = html.replace("<-MMuserId->","");
     }
     html = html.replace("<-MM->",currentMAAccount);
     target.innerHTML = html;
 }
 
 var loadUpdateMMAcc = function() {
-    var user = { "email" : '', "password" : '' , "type": '' , "MMAccount": ''};
+    var user = { 
+        userId      : '',
+        password    : '',
+        MMAccount   : '',
+        type        : ''   // 'P' -> Passenger , 'I' -> Insurer , 'O' -> Oracle 
+    };       
 
-    var email = document.getElementById('updateEmail').value;
+    var userId = document.getElementById('updateUserId').value;
     var password = document.getElementById('updatePassword').value;
     var newMMAccount = document.getElementById('updateMMAcount').value;
 
-    if ((email == "") || (password == "") || (newMMAccount == "")) {
+    if ((userId == "") || (password == "") || (newMMAccount == "")) {
         alert("Required parameters can not be blank !");
         return;
     }
     
-    user.email = email.toUpperCase();
+    user.userId = userId.toUpperCase();
     user.password = password;
     user.MMAccount = newMMAccount;
-    user.type = updateMMAccUserType;
+    user.type = ''; // user type is not updated
 
     loadUpdateMMAccAPI(user);
 }
@@ -1154,79 +789,257 @@ var loadUpdateMMAccProcess = function() {
     }
 }
 
-var loadConfigParam = function(){
-    var html = ui.Config;
+var loadBuyFDIClickParam = function(id) { 
 
-    html = html.replace("<-NET->",configData.network);
-    html = html.replace("<-ADDR->",configData.contractAddress);
-    target.innerHTML = html;
+    if (currentUser.type != 'P') {
+        target.innerHTML = "FAILURE: function restricted to PASSENGERS !!!";
+        return;
+    }
+    loadFDIAPI(id,loadBuyFDIClick);    
 }
 
-var loadConfig = function() {
-    var configParam = { id: 1, network: "Rinkeby",
-                        contractAddress: contractAddress } ;
+var loadBuyFDIClick = function(){
+    var FDI;
+    var html;
 
-    configParam.network = document.getElementById('configNet').value;
-    configParam.contractAddress = document.getElementById('configSCAddr').value;
+    if (lastRetMsg.includes('FAILURE')) {
+        target.innerHTML = lastRetMsg;
+    } 
+    else {
+        FDI = lastRetObj;
+        html = oneFDITablify(FDI);
+        html += ui.buyFDIParam;
+        html = html.replace("<-FDICost->",toMoney(costFDI));
+        target.innerHTML = html;
+        document.getElementById("defaultOpen").click();
+    }
+};
+ 
+async function buyFDIClick() {
+    var amount = costFDI;
 
-    if (configParam.contractAddress == "")  {
-        alert("Required parameters can not be blank !");
+    if (isNaN(amount)) {
+        alert("Amount needs to be a valid number !");
         return;
     }
     
-    setConfigDataAPI(configParam,loadConfigProcess);
+    if (amount <=0) {
+        alert("Amount needs to be greater than zero !");
+        return;
+    }
+
+    var msg = await buyFDIContractAPI(currentFDI.id,amount);
+    if (!msg.includes("SUCCESS")) {
+        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
+        return;
+    }
+
+   buyFDIAPI(currentFDI.id,currentMAAccount,amount);
 }
 
-var loadConfigProcess = function() {
-    var msgRetArea = document.getElementById('configBody');
+var buyFDIProcess = function() {
+    var msgRetArea = document.getElementById('buyFDIParam');
 
     if (lastRetMsg.includes('FAILURE')) {
         msgRetArea.innerHTML = lastRetMsg;
     } 
     else {
-        configData = lastRetObj;
-        msgRetArea.innerHTML = "SUCCESS: ConfigData was update successfully ! ";
-        setupWeb3(configData,callbackFunctionAccountChanged,callbackProcessSetWeb3);
+        msgRetArea.innerHTML = lastRetMsg;
     }
 }
 
-var callbackFunctionAccountChanged = function(newAccount) {
-    var syncAccount = document.getElementById('syncMetaMask').checked;
+var loadInputDelayClickParam = function(id) {
 
-    if (syncAccount) {
-        loginMetaMaskChanged(newAccount);
+    if (currentUser.type != 'O') {
+        target.innerHTML = "FAILURE: function restricted to ORACLES !!!";
+        return;
+    }
+
+    loadFDIAPI(id,loadInputDelayClick);    
+}
+
+var loadInputDelayClick = function(){
+    var FDI;
+    var html;
+
+    if (lastRetMsg.includes('FAILURE')) {
+        target.innerHTML = lastRetMsg;
+    } 
+    else {
+        FDI = lastRetObj;
+        html = oneFDITablify(FDI);
+        html += ui.inputDelayParam;
+        target.innerHTML = html;
+        document.getElementById("defaultOpen").click();
+    }
+};
+ 
+async function inputDelayClick() {
+    var amount = Number(document.getElementById('inputDelayValue').value);
+    var optDelayedYes = document.getElementById('optDelayedYes'); 
+    var optDelayed
+
+    if (optDelayedYes.checked) {
+        optDelayed = true
+    }
+    else {
+        optDelayed = false
+    }
+    if (optDelayed) {
+        if (isNaN(amount)) {
+            alert("Delay info must be a valid number !");
+            return;
+        }
+        
+        if (amount <= 0) {
+            alert("Delay info cannot be less than or equal to zero !");
+            return;
+        }
+        
+    }
+    else {
+        amount = 0
+    }
+
+    var inputDelayInfo = {
+        oracleName  : '', 
+        isDelayed   : false,
+        delayValue  : 0
+    };
+
+    inputDelayInfo.oracleName = currentUser.userId;
+    inputDelayInfo.isDelayed = optDelayed;
+    inputDelayInfo.delayValue = amount;
+
+    var IDInputDelayInfo = {
+        id  : '', 
+        inputDelayInfo : null
+    }
+
+    IDInputDelayInfo.id = currentFDI.id
+    IDInputDelayInfo.inputDelayInfo = inputDelayInfo
+
+    var msg = await inputDelayContractAPI(IDInputDelayInfo);
+    if (!msg.includes("SUCCESS")) {
+        target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
+        return;
+    }
+
+    inputDelayAPI(IDInputDelayInfo);
+}
+
+var inputDelayProcess = function() {
+    var msgRetArea = document.getElementById('inputDelayParam');
+
+    if (lastRetMsg.includes('FAILURE')) {
+        msgRetArea.innerHTML = lastRetMsg;
+    } 
+    else {
+        msgRetArea.innerHTML = lastRetMsg;
     }
 }
 
-function callbackSetupWeb3API() {
+var loadCreateFDIParam = function() {
+    if (isEmpty(currentUser))  {
+        target.innerHTML = "FAILURE: No user logged in ...";
+        return;
+    }
 
-    if (!lastRetMsg.includes('FAILURE')) {
-        configData = lastRetObj;
-        setupWeb3(configData,callbackFunctionAccountChanged,callbackProcessSetWeb3);
+    if (currentUser.type != 'I') {
+        target.innerHTML = "FAILURE: function restricted to INSURERS !!!";
+        return;
+    }
+
+    target.innerHTML = ui.createNewFDI;
+}
+
+async function createNewFDIClick() {
+    
+    var fdi =  {
+                    id          : '',
+                    status      : '', 
+                    funds       : 0,
+                    coverageNum : 0,
+                    delay       : 0,
+                    oracleNum   : 3,
+                    valuePerMinute : 0.1,
+                    maxMinutes  : 120,
+                    premiumFee  : 1,
+                    insurer     : '',
+                    coverages   : [],
+                    oracleInputDelay : [] 
+                };          
+
+    if ( isEmpty(currentUser)) {
+        target.innerHTML = "FAILURE: No user logged in ...";
+        return;
+    }
+
+    var funds = document.getElementById('newFDIFunds').value;
+    if (isNaN(funds)) {
+        alert("Total Compensation needs to be a valid number !");
+        return;
+    }
+    
+    if (funds <=0) {
+        alert("Total Compensation needs to be greater than zero !");
+        return;
+    }
+
+    var coverageNum = document.getElementById('newFDICoverageNum').value;
+    if (isNaN(coverageNum)) {
+        alert("Number of coverages needs to be a valid number !");
+        return;
+    }
+    
+    if (coverageNum <=0) {
+        alert("Number of coverages needs to be greater than zero !");
+        return;
+    }
+
+    var id = document.getElementById('newFDIID').value;
+    if (id == "") {
+        alert("ID cannot be null !");
+        return;
+    }
+                    
+    fdi.id = id;
+    fdi.status = "Open";
+    fdi.funds = funds;
+    fdi.coverageNum = coverageNum;
+    fdi.oracleNum = configData.oracleNum;
+    fdi.valuePerMinute = configData.valuePerMinute;
+    fdi.maxMinutes = configData.maxMinutes;
+    fdi.premiumFee = configData.premiumFee;
+    fdi.insurer = currentUser.userId;
+
+    let msg = await createNewFDIContractAPI(fdi);
+    if (!msg.includes("SUCCESS")) {
+        target.innerHTML = "FAILURE: New flight delay insurance was not created ..." + msg;
+        return;
+    }
+
+    loadCreateNewFDIAPI(fdi);
+   
+}
+
+var newFDIProcess = function() {
+    var msgRetArea = document.getElementById('createNewFDI');
+
+    if (lastRetMsg.includes('FAILURE')) {
+        msgRetArea.innerHTML = lastRetMsg;
     } 
-}
-
-function callbackProcessSetWeb3(msg) {
-    contractInfo.innerHTML = "Contract - " + msg + " - ";    
-}
-
-function callbackSetupConfigData() {
-
-    if (!lastRetMsg.includes('FAILURE')) {
-        configData = lastRetObj;
-    } 
-}
-
-function getConfigData(callbackfunction) {
-    getConfigDataAPI(callbackfunction);
+    else {
+        msgRetArea.innerHTML = lastRetMsg;
+    }
 }
 
 loggedin = document.getElementById('loggedin');
 contractInfo = document.getElementById('contractInfo');
 
-defaultModule();
-
 getConfigData(callbackSetupWeb3API); 
+
+defaultModule();
 
 console.log('Finished');
 

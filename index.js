@@ -1,4 +1,4 @@
-var port = 8000;
+var port = 9000;
 var contractAddress = "0x8301e49bf9746b1f20bd0520f980d14ded9eb1e9";
 var express = require('express');
 var app = express();
@@ -18,32 +18,31 @@ var db = low(adapter);
 // required data store structure
 // YOUR CODE
 db.defaults({
-               factualnews:[
-/*                   {id          : '',
+               fdi:[
+/*               {
+                    id          : '',
                     status      : '', 
-                    title       : '',
-                    newsBody   : '',
-                    newsRev    : '',
-                    originator : '',
-                    reviewer    : '',
-                    auditors    : [] ,
                     funds       : 0,
-                    auditorsApprovalStatus : []
+                    coverageNum : 0,
+                    delay       : 0,
+                    oracleNum   : 3,
+                    valuePerMinute : 0.1,
+                    maxMinutes  : 120,
+                    premiumFee  : 1,
+                    insurer     : '',
+                    coverages   : [],
+                    oracleInputDelay : [] 
                  }  */
                 ] ,
-                originators:[
-/*                    {email       : '',
-                     password    : ''} */
-                 ] ,
-                 reviewers:[
-/*                    {email       : '',
-                     password    : ''}  */
-                 ] ,
-                auditors:[
-/*                    {email       : '',
-                     password    : ''}  */
-                 ]  
-  
+                users:[
+/*                   { 
+                        userId      : '',
+                        password    : '',
+                        MMAccount   : '',
+                        type        : ''   // 'P' -> Passenger , 'I' -> Insurer , 'O' -> Oracle 
+                   }       */
+                ] 
+                      
 } ).write();
 
 // Useful functions
@@ -59,259 +58,82 @@ function toMoney(num) {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'ETH' }).format(num);
 }
 
-function type2table(type) {
-    switch(type) {
-        case 'O':
-            table = 'originators';
-            break;
-        case 'R':
-            table = 'reviewers';
-            break;
-        case 'A':
-            table = 'auditors';
-            break;
-        default:
-            table = '';
-       }
-    return table;
-}
-
-// Find a user on a specific table
-function findUser(email, type) {
-   var user,table;
-
-   user = null;
-   table = type2table(type);
-   if (table != '') {
-        user = db.get(table).find({ email: email.toUpperCase() }).value();
-   }
-
-   return user;
-}
-
-// Find a user on a specific table
-function findUserMetaMask(MMAccount) {
-    var user;
-    
-    user = null;
-    user = db.get('originators').find({ MMAccount: MMAccount }).value();
-    if (isEmpty(user)) {
-        user = db.get('reviewers').find({ MMAccount: MMAccount }).value();
-        if (isEmpty(user)) {
-            user = db.get('auditors').find({ MMAccount: MMAccount }).value();
-            if (isEmpty(user)) {
-                return null;
-            }
-            else {
-                user.type = 'A';
-            }
-        }    
-        else {
-            user.type = 'R';
-        }
-    }
-    else {
-        user.type = 'O';
-    }
+function writeToDbFDIPointer(FDI) {
+    var ret;
  
+    ret = false;
+    if (!isEmpty(FDI)) {
+        db.write();
+        ret = true;
+    }
+    return ret;
+ }
+ 
+// User management funcions
+// Find a user on a specific table
+function findUser(userId) {
+    var user,table;
+ 
+    user = null;
+    user = db.get('users').find({ userId: userId.toUpperCase() }).value();
+    
     return user;
  }
  
- 
-
-// Create user on a specific table
-function createUser(email, password, type, MMAccount) {
-    var user,table;
-    var ret;
- 
-    ret = false;
-    table = type2table(type);
-    if (table != '') {
-       user = {"email" : email.toUpperCase() , "password" : password , "MMAccount" : MMAccount } 
-       db.get(table).push(user).write();
-       ret = true;
-    }
- 
-    return ret;
- }
- 
-// Find a specific FactualNews
-function findFactualNews(id) {
-    var news;
- 
-    news = db.get('factualnews').find({ id: id }).value();
- 
-    return news;
- }
-
- // Create a new Factual News 
-function createFactualNews(id, status, title, newsBody, newsRev,originator, reviewer, auditors, funds, auditorsApprovalStatus) {
-
-    var news;
-    var ret;
- 
-    ret = false;
-    news = { "id" : String(id) , "status" : status , "title" : title , "newsBody" : newsBody , 
-             "newsRev" : newsRev , "originator": originator.toUpperCase(), "reviewer" : reviewer.toUpperCase() , 
-             "auditors" : auditors , "funds": funds , "auditorsApprovalStatus" : auditorsApprovalStatus} 
-    db.get('factualnews').push(news).write();
-    ret = true;
- 
-    return ret;
- }
-
-// updade the object based on what is going to change
-function updateFactualNewsFields(news, id, status, title, newsBody, newsRev, originator, reviewer, auditors, funds, auditorsApprovalStatus) {
-
-//    if (id != '') { 
-//        news.id = id;
-//    }
-    if ((status != '') && (!isEmpty(status))) {
-        news.status = status;
-    }
-    if ((title != '') && (!isEmpty(title))) {
-        news.title = title;
-    }
-    if ((newsBody != '') && (!isEmpty(newsBody))) {
-        news.newsBody = newsBody;
-    }
-    if ((newsRev != '') && (!isEmpty(newsRev))) {
-        news.newsRev = newsRev;
-    }
-    if ((originator != '') && (!isEmpty(originator))) {
-        news.originator = originator.toUpperCase();
-    }
-    if ((reviewer != '') && (!isEmpty(reviewer))) {
-        news.reviewer = reviewer.toUpperCase();
-    }
-    if ( !isEmpty(auditors)) {
-        var len = auditors.length;
-        for (i=0;i<len;i++) {
-            auditors[i] = auditors[i].toUpperCase();
-        }
-        news.auditors = auditors;
-    }
-    if (!isEmpty(funds)) {
-        news.funds = funds;
-    } 
-    if ( !isEmpty(auditorsApprovalStatus)) {
-        news.auditorsApprovalStatus = auditorsApprovalStatus;
-    }
-
-    return news;
-}
-  // Update Factual News 
-function updateFactualNews(id, status, title, newsBody, newsRev, originator, reviewer, auditors, funds, auditorsApprovalStatus) {
-
-    var news;
-    var ret;
- 
-    ret = false;
-    news = findFactualNews(id);
-    if (!isEmpty(news)) {
-        updateFactualNewsFields(news,id, status, title, newsBody, newsRev, originator, reviewer, auditors,funds,auditorsApprovalStatus);
-        db.write();
-        ret = true;
-    }
- 
-    return ret;
- }
-
- function writeToDbNewsPointer(news) {
-    var ret;
- 
-    ret = false;
-    if (!isEmpty(news)) {
-        db.write();
-        ret = true;
-    }
-    return ret;
- }
+ function findUserMetaMask(MMAccount) {
+     var user;
+     
+     user = null;
+     user = db.get('users').find({ MMAccount: MMAccount }).value();
   
- // Return a list of FactualNews that belongs to the originator
- function findNewsFromOriginator(originator) {
-    var newsList;
-
-    newsList = db.get('factualnews')
-             .filter(news => news.originator == originator ) 
-             .value();
-            
-    return newsList;             
- }
-
- // Return a list of FactualNews that belongs to the reviewer
- function findNewsFromReviewer(reviewer) {
-    var newsList;
-
-    newsList = db.get('factualnews')
-             .filter(news => news.reviewer == reviewer ) 
-             .value();
-            
-    return newsList;             
- }
-
- function isInAuditorList(auditorList,auditor) {
-     if (isEmpty(auditorList)) {
-         return false;
-     }
-     var len = auditorList.length
-     for(i=0;i<len;i++) {
-         if (auditorList[i] == auditor ) {
-            return true;
-         }
-     }
-     return false;
- }
-
- function countAuditors(auditorList) {
-    if (isEmpty(auditorList)) {
-        return 0;
-    }
-    var len = auditorList.length
-    return len;
- }
-
-// Return a list of FactualNews that belongs to the auditor
-function findNewsFromAuditor(auditor) {
-     var newsList;
-
-     newsList = db.get('factualnews')
-                 .filter(news => isInAuditorList(news.auditors,auditor) ) 
-                 .value();
-    
-    return newsList;             
- }
-
-//Retrieve all news
-function getAllNews() {
-    return db.get('factualnews').value();
+     return user;
+  }
+ 
+ function createUser(user) {
+    var ret;
+  
+    ret = false;
+    db.get('users').push(user).write();
+    ret = true;
+  
+    return ret;
 }
 
-function viewParamFilter(news,viewParam) {
+function checkUserLogin(userId,password) {
+    var ret = false;
+    var user;
+
+    user = findUser(userId.toUpperCase());
+    if (!isEmpty(user)) {
+        if (user.password == password) {
+            ret = true;
+        }
+    }
+
+    return ret;
+} 
+  
+// Application functions
+function viewParamFilter(fdi,viewParam) {
     var len;
-    switch(viewParam.userType) {
-        case 'O':
-            if (viewParam.userName != news.originator) {
-                return false;
-            }
-            break;
-        case 'R':
-            if (viewParam.userName != news.reviewer) {
-                return false;
-            }
-            break;
-        case 'A':
-            if (!isInAuditorList(news.auditors,viewParam.userName)) {
-                return false;
-            }
-            break;
-        default:
-       }
-    len = viewParam.newsStatus.length;
+
+    if (viewParam.id != '') {
+        if (viewParam.id != fdi.id) {
+            return false;
+        }
+    }
+
+    if (viewParam.insurer != '') {
+        if (viewParam.insurer != fdi.insurer) {
+            return false;
+        }
+    }
+
+    len = viewParam.statusList.length;
     if (len > 0) {
         var statusInTheList = false;
         for (var i=0; i<len; i++) {
-            if (viewParam.newsStatus[i] == news.status) {
+            if (viewParam.statusList[i] == fdi.status) {
                 statusInTheList = true;
             }
         }
@@ -322,436 +144,95 @@ function viewParamFilter(news,viewParam) {
     return true;
 }
 
-
-// Retrive news according to the parameters --> var viewParam = { "userName": '', "userType": '', "newsStatus": '' };
+// Retrive fdi according to the parameters --> var viewParam = { "id": '', "status": '' };
 // All users must 
-function getViewParamNews(viewParam) {
-    var newsList;
+function getViewParamFDI(fdiParam) {
+    var fdiList;
 
-    newsList = db.get('factualnews')
-                .filter(news => viewParamFilter(news,viewParam) ) 
+    fdiList = db.get('fdi')
+                .filter(fdi => viewParamFilter(fdi,fdiParam) ) 
                 .value();
    
-   return newsList;             
+   return fdiList;             
 }
 
-// check if the user can be authenticated 
-function checkUserLogin(email,password,type) {
+// Find a specific FDI
+function findFDI(id) {
+    var FDI;
+ 
+    FDI = db.get('fdi').find({ id: id }).value();
+ 
+    return FDI;
+ }
+
+ function buyFDI(id,account,amount) {
+    var FDI;
     var ret = false;
-    var user;
-
-    user = findUser(email.toUpperCase(),type);
-    if (!isEmpty(user)) {
-        if (user.password == password) {
-            ret = true;
-        }
+    var coverage = { 
+        account : '',
+        amount  : 0 ,
+        type    : ''
     }
 
+    FDI = findFDI(id);
+    if (!isEmpty(FDI)) {
+        FDI.coverageNum -= 1;
+        coverage.account = account;
+        coverage.amount = amount;
+        FDI.coverages.push(coverage);
+        ret = writeToDbFDIPointer(FDI);
+    }
     return ret;
-} 
+ }
 
-//Create a review request
-function createRequest(id) {
+function createOracleInputDelay(IDInputDelayInfo) {
+    var FDI;
     var ret = false;
-    var auditorList;
-
-    auditorList = [];
-    auditorsApprovalStatusList = [];
-    ret = createFactualNews(String(id),"Blank","","","","","",auditorList,0,auditorsApprovalStatusList);
-    return ret;
-}    
-
-//Request a review 
-function requestReview(id,newsBody) {
-    var news = findFactualNews(id);
-    var ret = false;
-
-    if (!isEmpty(news)) {
-        if (news.status == "Blank") {
-            if (newsBody != "") {
-                ret = updateFactualNews(id,"Auditing","",newsBody);
-            }
-        }
+    var coverage = { 
+        account : '',
+        amount  : 0 ,
+        type    : ''
     }
 
-    return ret;
-}    
-
-// Assign a reviewer to the news
-function assignReviewerToFactualNews(id,reviewer) {
-    var ret = false;
-    var user;
-
-    user = findUser(reviewer,"R");
-    if (!isEmpty(user)) {
-        ret = updateFactualNews(id,"","","","","",reviewer);
-        if (ret) {
-            validateAndUpdateStatus(id,"Approve Reviewer");
+    FDI = findFDI(IDInputDelayInfo.id);
+    if (!isEmpty(FDI)) {        
+        if (FDI.oracleNum == (FDI.oracleInputDelay.length-1)) {
+            FDI.status = "Finalized";
         }
+        else {
+            FDI.status = "Reporting";
+        }
+        FDI.oracleInputDelay.push(IDInputDelayInfo.inputDelayInfo);
+        ret = writeToDbFDIPointer(FDI);
     }
     return ret;
 }
 
-// Assign an auditor to the news
-function assignAuditorToFactualNews(id,auditor) {
-    var ret = false;
-    var news;
-    var auditorList,auditorsApprovalStatusList;
+function createNewFDI(fdi) {
+    var otherFDI;
 
-    ret = false;
-    user = findUser(auditor,"A");
-    if (!isEmpty(user)) {
-        news = findFactualNews(id);
-        if (!isEmpty(news)) {
-            if (!isInAuditorList(news.auditors,auditor))  {
-                auditorList = [];
-                auditorList = news.auditors;
-                auditorList.push(auditor);
-                auditorsApprovalStatusList = [];                
-                auditorsApprovalStatusList = news.auditorsApprovalStatus;
-                auditorsApprovalStatusList.push(-1);
-                ret = updateFactualNews(id,"","","","","","",auditorList,null,auditorsApprovalStatusList);    
-            }
-        }
-    }    
+    otherFDI = findFDI(fdi.id);
+    if (!isEmpty(otherFDI)) {
+        return "FAILURE: ID already exists";
+    }
 
-    return ret;
+    db.get('fdi').push(fdi).write();
+
+    return "SUCCESS: New Flight Delay Insurance was created !";
 }
 
-// validate status change 
-function validateStatusChange(id,newStatus) {
-    var news = findFactualNews(id);
-    var ret = false;
-
-    if (!isEmpty(news)) {
-//  This status can be "Blank", "Requested", "Approve Reviewer", "Reviewing" , "Auditing" , "Approved" or "Denied"        
-        switch (newStatus) {
-            case 'Requested':
-                if (news.status == 'Blank') {
-                    ret = true;
-                }
-                break;
-            case 'Approve Reviewer':
-                if (news.status == 'Requested') {
-                    ret = true;
-                }
-                break;
-            case 'Reviewing':
-                if (news.status == 'Approve Reviewer') {
-                    if (news.reviewer != "") {
-                        if (!isEmpty(news.auditors)) {
-                            if (news.auditors.length > 0) {
-                                ret = true;
-                            }
-                        }
-                    }
-                }
-                break;
-            case 'Auditing':
-                if (news.status == 'Reviewing') {
-                    ret = true;
-                }
-                break;
-            case 'Approved':
-                if (news.status == 'Auditing') {
-                    ret = true;
-                }
-                break;
-            case 'Denied':
-                if (news.status == 'Auditing') {
-                    ret = true;
-                }
-                break;
-            default:
-                ret = false;
-        }
-    }
-    else {
-        ret = false;
-    }
-    return ret;
-}
-
-// update FactualNews Status
-function updateNewsStatus(id,status) {
-    var ret = false;
-
-    ret = updateFactualNews(id,status);
-
-    return ret;
-}
-
-function validateAndUpdateStatus(id,newStatus) {
-    var ret=false;
-    if (validateStatusChange(id,newStatus)) {
-        if (updateNewsStatus(id,newStatus)) {
-            ret = true;
-        }
-    }
-    return ret;
-}
-
-function addFundsToFactualNews(id,amount) {
-    var news;
-    var ret = false;
-
-    news = findFactualNews(id);
-    if (!isEmpty(news)) {
-        news.funds += Number(amount);
-        writeToDbNewsPointer(news);
-        validateAndUpdateStatus(id,"Requested");
-        ret = true;
-    }
-    return ret;
-}
-
-// approve Reviewer and Auditors
-function appproveReviewerAuditors(id) {
-    var news = findFactualNews(id);
-    var ret = false;
-
-    if (!isEmpty(news)) {
-        if ((news.status == "Approve Reviewer") || (news.status == "Requested")) {
-            if (countAuditors(news.auditors) > 0) {
-                ret = validateAndUpdateStatus(id,"Reviewing");
-            }
-        }
-    }
-
-    return ret;
-}    
-
-// Finalize a review
-function completeReview(id,newsRev) {
-    var news = findFactualNews(id);
-    var ret = false;
-
-    if (!isEmpty(news)) {
-        if (news.status == "Reviewing") {
-            if (newsRev != "") {
-                ret = updateFactualNews(id,"Auditing","","",newsRev);
-            }
-        }
-    }
-
-    return ret;
-}    
-
-// status = -1 (undefined) 0 = Denied and 1 = approved
-function updateAuditorStatus(news,auditor,status) {
-
-    if (isEmpty(news)) {
-        return false;
-    }
-
-    if (isEmpty(news.auditors)) {
-        return false;
-    }
-    var len = news.auditors.length;
-    for(i=0;i<len;i++) {
-        if (news.auditors[i] == auditor ) {
-            news.auditorsApprovalStatus[i] = status;
-            return true;
-        }
-    }
-    return false;
-}
-
-function countAuditorApprovalStatus(news,status) {
-    var len = news.auditorsApprovalStatus.length;
-    var count=0;
-    for(i=0;i<len;i++) {
-        if (news.auditorsApprovalStatus[i] == status ) {
-            count++;
-        }
-    }
-    return count;
-}
-
-function checkStatus(news) {
-    var countApproved,countDenied;
-    var totalAuditors,tempTotalAuditors;
-
-    countApproved = countAuditorApprovalStatus(news,1);
-    countDenied = countAuditorApprovalStatus(news,0);
-
-    totalAuditors = countAuditors(news.auditors);
-
-    if ( ((totalAuditors % 2) == 0) &&
-         (totalAuditors == (countApproved + countDenied)) &&
-         (countApproved == countDenied)  
-       ) {
-        return 0;
-    }
-
-    if ((totalAuditors % 2) != 0) {
-        tempTotalAuditors = totalAuditors + 1;
-    }
-    else {
-        tempTotalAuditors = totalAuditors;
-    }
-    
-    if (countDenied >= (tempTotalAuditors/2)) {
-        return 0;
-    }
-
-    if (countApproved >= (tempTotalAuditors/2)) {
-        return 1;
-    }
-
-    return -1;
-}
-
-// Return -2 - error -1 - undefined 0 - denied and 1 - approved
-function approveOrDenyReview(id,auditor,newStatus) {
-    var news = findFactualNews(id);
-    var ret = -2;
-
-    if (!isEmpty(news)) {
-        if (updateAuditorStatus(news,auditor,newStatus)) {
-            writeToDbNewsPointer(news);
-
-            switch (checkStatus(news)) {
-                case 1:
-                    if (news.status == "Auditing") {
-                        if (updateFactualNews(id,"Approved"))  {
-                            ret = 1;
-                        }
-                    }
-                    break;
-                case 0:
-                    if (news.status == "Auditing") {
-                        if (updateFactualNews(id,"Denied")) {
-                            ret = 0;
-                        }
-                    }
-                    break;
-                default:
-                    ret = -1
-                    break;
-            }
-        }
-    }
-    return ret;
-}    
-
-// Approve a review
-function approveReview(id,auditor) {
-    return approveOrDenyReview(id,auditor,1);
-}
-
-// Denial a review
-function denyReview(id,auditor) {
-    return approveOrDenyReview(id,auditor,0);
-}    
-
-// Apply for review
-app.get('/apply_review/:id/:email', function (req, res) {
+ app.get('/find_FDI/:id', function (req, res) {
     var msg;
-
-    ret = assignReviewerToFactualNews(req.params.id,req.params.email);
-    if (!ret) {
-        msg = "FAILURE: reviewer cannot be assigned !";
-    }
-    else {
-        msg = "SUCCESS: reviewer was assigned";
-    }
-
-    console.log(msg);   
-    res.send(msg);
-});
-
-// Apply for audit
-app.get('/apply_audit/:id/:email', function (req, res) {
-    var msg;
-
-    ret = assignAuditorToFactualNews(req.params.id,req.params.email);
-    if (!ret) {
-        msg = "FAILURE: auditor cannot be assigned !";
-    }
-    else {
-        msg = "SUCCESS: Auditor was assigned";
-    }
-
-    console.log(msg);   
-    res.send(msg);
-});
-app.get('/approve_reviewer_auditors/:id', function (req, res) {
-    var msg;
-
-    ret = appproveReviewerAuditors(req.params.id);
-    if (!ret) {
-        msg = "FAILURE: reviewer and auditor cannot be approved !";
-    }
-    else {
-        msg = "SUCCESS: Review request is approved ! ";
-    }
-
-    console.log(msg);   
-    res.send(msg);
-});
-
-app.get('/approve_review/:id/:auditor', function (req, res) {
-    var msg;
-    var ret;
-
-    ret = approveReview(req.params.id,req.params.auditor);
-    switch (ret) {
-        case 1:
-            msg = "SUCCESS: Auditor response registered - NEWS WAS APPROVED!!!";
-            break;
-        case 0:
-            msg = "SUCCESS: Auditor response registered - News was DENIED :-(";
-            break;
-        case -1:
-            msg = "SUCCESS: Auditor response registered - News still under auditing status";
-            break;
-        default:
-            msg = "FAILURE: Auditor response was not computed properly";
-            break;
-
-    }
-    console.log(msg);   
-    res.send(msg);
-});
-
-app.get('/deny_review/:id/:auditor', function (req, res) {
-    var msg;
-    var ret;
-
-    ret = denyReview(req.params.id,req.params.auditor);
-    switch (ret) {
-        case 1:
-            msg = "SUCCESS: Auditor response registered - NEWS WAS APPROVED!!!";
-            break;
-        case 0:
-            msg = "SUCCESS: Auditor response registered - News was DENIED :-(";
-            break;
-        case -1:
-            msg = "SUCCESS: Auditor response registered - News still under auditing status";
-            break;
-        default:
-            msg = "FAILURE: Auditor response was not computed properly";
-            break;
-
-    }
-    console.log(msg);   
-    res.send(msg);
-
-}); 
-
-app.get('/find_news/:id', function (req, res) {
-    var msg;
-    var news;
+    var FDI;
     var id;
 
-    msg = "FAILURE: news is not avaiable !";
+    msg = "FAILURE: FDI is not avaiable !";
     if (!isEmpty(req.params.id)) {
         id = req.params.id;
-        news = findFactualNews(id);
-        if (!isEmpty(news)) {
-            msg = "SUCCESS: News was loaded ! ";
-            res.send(news);
+        FDI = findFDI(id); 
+        if (!isEmpty(FDI)) {
+            msg = "SUCCESS: FDI was loaded ! ";
+            res.send(FDI);
         }
         else {
             res.send(msg);
@@ -760,185 +241,65 @@ app.get('/find_news/:id', function (req, res) {
     else {
         res.send(msg);
     }
-
     console.log(msg);   
 }); 
 
-app.get('/add_funds_news/:id/:fundAmount', function (req, res) {
+app.get('/buy_FDI/:id/:account/:amount', function (req, res) {
     var msg;
-    var id,amount;
+    var id,account,amount;
+    var FDI;
 
-    msg = "FAILURE: news is not avaiable !";
+    msg = "FAILURE: FDI is not avaiable !";
     if (!isEmpty(req.params.id)) {
         id = req.params.id;
-        amount = Number(req.params.fundAmount);;
-        if (addFundsToFactualNews(id,amount)) {
-            msg = "SUCCESS: Funds added to this News Review Request - " + toMoney(amount);
-            res.send(msg);
+        account = req.params.account;
+        amount = Number(req.params.amount);
+        FDI = findFDI(id);
+        if (!isEmpty(FDI)) {
+            if (FDI.status == "Open") {
+                if (FDI.coverageNum > 0) {
+                    if (buyFDI(id,account,amount)) { 
+                        msg = "SUCCESS: Coverage was sold to " + account;
+                        res.send(msg);
+                    }
+                    else {
+                        msg = "FAILURE: Error processing buyFDI !";
+                        res.send(msg);
+                    }
+                }
+                else {
+                    msg = "FAILURE: There is no coverage available to buy !";
+                    res.send(msg);
+                }
+            }
+            else {
+                msg = "FAILURE: This is flight is not available to coverage purchases !";
+                res.send(msg);
+            }
         }
         else {
             res.send(msg);
         }
-    }
+  }
     else {
         res.send(msg);
     }
 
     console.log(msg);   
 }); 
-
-app.get('/apply_review/:id/:reviewer', function (req, res) {
-    var msg;
-    var id,reviewer;
-
-    msg = "FAILURE: news is not avaiable !";
-    if (!isEmpty(req.params.id)) {
-        id = req.params.id;
-        reviewer = req.params.reviewer;
-        if (assignReviewerToFactualNews(id,reviewer)) {
-            msg = "SUCCESS: " + reviewer + " is the reviewer for News " +id;
-            res.send(msg);
-        }
-    }
-
-    res.send(msg);
-    console.log(msg);   
-}); 
-
-// Check login and password
-app.get('/joinus/:email/:password/:type/:MMAccount', function (req, res) {
-    var msg;
-    
-    if (createUser(req.params.email,req.params.password,req.params.type,req.params.MMAccount)) {
-        msg = "SUCCESS: User - "+req.params.email+ ", type - " + req.params.type + ", created !";
-        res.send(msg);
-    }
-    else {
-        res.send(msg);
-    }
-    console.log(msg);   
-});
 
 app.use(myParser.urlencoded({extended : true}));
 app.use(myParser.json());
 
-app.post('/get_view_param_news', function (req, res) {
-    var msg;
-    var viewParam
-
-    var newsList;
-
-    viewParam = req.body;
-    newsList = getViewParamNews(viewParam);
-    if (isEmpty(newsList)) {
-        msg = "FAILURE: no news is avaiable !";
-        res.send(msg);
-    }
-    else {
-        msg = "SUCCESS: All news are loaded ! ";
-        res.send(newsList);
-    }
-
-    console.log(msg);   
-}); 
-
-app.post('/create_new_news', function (req, res) {
-    var msg;
-    var news;
-
-    msg = "FAILURE: new news could not be created !";
-    news = req.body;
-    if (!isEmpty(news)) {
-
-        if (createFactualNews(news.id,news.status,news.title,news.newsBody,news.newsRev,news.originator,news.reviewer,news.auditors,news.funds,news.auditorsApprovalStatus)) {
-            msg = "SUCCESS: News was created ! ";
-            res.send(msg);
-        }
-        else {
-            res.send(msg);
-        }
-    }
-    else {
-        res.send(msg);
-    }
-
-    console.log(msg);   
-}); 
-
-
-app.post('/complete_review', function (req, res) {
-    var msg;
-    var news;
-
-    msg = "FAILURE: news review could not be completed !";
-    news = req.body;
-    if (!isEmpty(news)) {
-
-        if (completeReview(news.id,news.newsRev)) {
-            msg = "SUCCESS: Review was completed ! ";
-            res.send(msg);
-        }
-        else {
-            res.send(msg);
-        }
-    }
-    else {
-        res.send(msg);
-    }
-
-    console.log(msg);   
-}); 
-
-
-app.post('/login_user', function (req, res) {
-    var msg;
-    var user;
-
-    msg = "FAILURE: login could not be completed !";
-    user = req.body;
-    if (!isEmpty(user)) {
-
-        if (checkUserLogin(user.email,user.password,user.type)) {
-            msg = "SUCCESS: User logged in ! ";
-            res.send(user);
-        }
-        else {
-            res.send(msg);
-        }
-    }
-    else {
-        res.send(msg);
-    }
-
-    console.log(msg);   
-}); 
-
-app.post('/login_user_metamask', function (req, res) {
-    var msg;
-    var user,tmpUser;
-
-    msg = "FAILURE: login could not be completed !";
-    user = req.body;
-    if (!isEmpty(user)) {
-
-        tmpUser = findUserMetaMask(user.MMAccount);
-        if (!isEmpty(tmpUser)) {
-            user = tmpUser;
-            msg = "SUCCESS: User logged in ! ";
-            res.send(user);
-        }
-        else {
-            res.send(msg);
-        }
-    }
-    else {
-        res.send(msg);
-    }
-    console.log(msg);   
-}); 
-
-var configDataFoundconfigData = { id: 1, Network: "Rinkeby",
-                   contractAddress: contractAddress } ;
+// Config information
+var configDataFoundconfigData = {   id: 1, 
+                                    Network: "Rinkeby",
+                                    contractAddress: contractAddress ,
+                                    oracleNum: 3,
+                                    valuePerMinute: 0.1,
+                                    maxMinutes: 120,
+                                    premiumFee: 1
+                                    } ;
 
 function findConfigData() {
     var configData,table;
@@ -965,6 +326,10 @@ function updateConfigData(configDataParam) {
     else {
         configDataFound.network = configDataParam.network;
         configDataFound.contractAddress = configDataParam.contractAddress;
+        configDataFound.oracleNum = configDataParam.oracleNum;
+        configDataFound.valuePerMinute = configDataParam.valuePerMinute;
+        configDataFound.maxMinutes = configDataParam.maxMinutes;
+        configDataFound.premiumFee = configDataParam.premiumFee;
         db.write();
         ret = true;    
     }
@@ -1005,16 +370,80 @@ app.post('/setconfigdata', function (req, res) {
 
     console.log(msg);   
 }); 
-                
+
+// Check login and password
+app.post('/createuser', function (req, res) {
+    var msg;
+    
+    user = req.body;
+    
+    if (createUser(user)) {
+        msg = "SUCCESS: User - "+user.userId+ ", type - " + user.type + ", created !";
+        res.send(msg);
+    }
+    else {
+        msg = "FAILURE: User - "+user.userId+ " WAS NOT created !!!";
+        res.send(msg);
+    }
+    console.log(msg);   
+});
+
+app.post('/login_user', function (req, res) {
+    var msg;
+    var user;
+
+    msg = "FAILURE: login could not be completed !!!";
+    user = req.body;
+    if (!isEmpty(user)) {
+
+        if (checkUserLogin(user.userId,user.password)) {
+            msg = "SUCCESS: User logged in ! ";
+            res.send(user);
+        }
+        else {
+            res.send(msg);
+        }
+    }
+    else {
+        res.send(msg);
+    }
+
+    console.log(msg);   
+}); 
+
+app.post('/login_user_metamask', function (req, res) {
+    var msg;
+    var user,tmpUser;
+
+    msg = "FAILURE: login could not be completed !!!";
+    user = req.body;
+    if (!isEmpty(user)) {
+
+        tmpUser = findUserMetaMask(user.MMAccount);
+        if (!isEmpty(tmpUser)) {
+            user = tmpUser;
+            msg = "SUCCESS: User logged in ! ";
+            res.send(user);
+        }
+        else {
+            res.send(msg);
+        }
+    }
+    else {
+        res.send(msg);
+    }
+    console.log(msg);   
+}); 
+
 app.post('/update_user_metamask', function (req, res) {
     var msg;
     var user,tmpUser;
 
-    msg = "FAILURE: update MetaMask account could not be completed !";
+    msg = "FAILURE: update MetaMask account could not be completed !!!";
     user = req.body;
     if (!isEmpty(user)) {
 
-        tmpUser = findUser(user.email.toUpperCase(),user.type);
+        tmpUser = findUser(user.userId.toUpperCase());
         if (!isEmpty(tmpUser)) {
             if (user.password == tmpUser.password) {
                 tmpUser.MMAccount = user.MMAccount;
@@ -1027,7 +456,54 @@ app.post('/update_user_metamask', function (req, res) {
     console.log(msg);   
 }); 
 
+app.post('/get_view_param_fdi', function (req, res) {
+    var msg;
+    var viewParam
+
+    var fdiList;
+
+    viewParam = req.body;
+    fdiList = getViewParamFDI(viewParam);
+    if (isEmpty(fdiList)) {
+        msg = "FAILURE: no flight delay insurance is avaiable !";
+        res.send(msg);
+    }
+    else {
+        msg = "SUCCESS: All flight delay insurance are loaded ! ";
+        res.send(fdiList);
+    }
+
+    console.log(msg);   
+}); 
+
+app.post('/input_delay', function (req, res) {
+    var msg;
+    var IDInputDelayInfo
+
+    IDInputDelayInfo = req.body;
+    if (createOracleInputDelay(IDInputDelayInfo)) {
+        msg = "SUCCESS: Oracle input fligh delay updated!";
+        res.send(msg);
+    } 
+    else {
+        msg = "FAILURE: Oracle input flight delay failed !!!";
+        res.send(msg);
+    }
+
+    console.log(msg);   
+}); 
+
+app.post('/create_new_fdi', function (req, res) {
+    var msg;
+    var fdi;
+
+    fdi = req.body;
+    msg = createNewFDI(fdi)
+    res.send(msg);
+    console.log(msg);   
+}); 
+
 app.listen(port,function () { 
-    console.log('FactualNews http server is ready at ' + String(port))
+    console.log('Flight Delay Insurance http server is ready at ' + String(port))
 });
 
