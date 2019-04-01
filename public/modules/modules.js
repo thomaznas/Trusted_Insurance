@@ -8,8 +8,6 @@ var configData = { id: 1, network: "Rinkeby",
                    premiumFee: 1
                  } ;
 
-var costFDI = 0.1;
-
 var firstTimeAccountChanged = true;
 
 var ui = {};
@@ -809,14 +807,14 @@ var loadBuyFDIClick = function(){
         FDI = lastRetObj;
         html = oneFDITablify(FDI);
         html += ui.buyFDIParam;
-        html = html.replace("<-FDICost->",toMoney(costFDI));
+        html = html.replace("<-FDICost->",toMoney(FDI.premiumFee));
         target.innerHTML = html;
         document.getElementById("defaultOpen").click();
     }
 };
  
 async function buyFDIClick() {
-    var amount = costFDI;
+    var amount = FDI.premiumFee;
 
     if (isNaN(amount)) {
         alert("Amount needs to be a valid number !");
