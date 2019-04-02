@@ -812,6 +812,7 @@ var loadBuyFDIClick = function(){
         document.getElementById("defaultOpen").click();
     }
 };
+
  
 async function buyFDIClick() {
     var amount;
