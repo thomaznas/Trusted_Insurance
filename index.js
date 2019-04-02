@@ -196,7 +196,7 @@ function createOracleInputDelay(IDInputDelayInfo) {
 
     FDI = findFDI(IDInputDelayInfo.id);
     if (!isEmpty(FDI)) {        
-        if (FDI.oracleNum == (FDI.oracleInputDelay.length-1)) {
+        if (FDI.oracleNum == (FDI.oracleInputDelay.length+1)) {
             FDI.status = "Finalized";
         }
         else {

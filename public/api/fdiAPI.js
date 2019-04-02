@@ -78,9 +78,10 @@ async function buyFDIContractAPI(id,value) {
 async function setConfigContractAPI(configParam) {
     var result;
     try {
-        var valuePerMinute = parseInt(configParam.valuePerMinute*1e7)
+        var valuePerMinute = parseInt(configParam.valuePerMinute*1e8)
+        var valuePremiumFee = parseInt(configParam.premiumFee*1e8)
         let result = await FDIContract.methods.setFDIParameters(configParam.oracleNum,valuePerMinute,
-                                                                configParam.maxMinutes,configParam.premiumFee).send({from : currentMAAccount});
+                                                                configParam.maxMinutes,valuePremiumFee).send({from : currentMAAccount});
         return "SUCCESS";
 
     } catch (err) {

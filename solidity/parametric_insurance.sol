@@ -4,10 +4,10 @@ import "./safemath.sol";
 
 contract ParametricInsurance {
     
-    uint oracleNum = 3;
+    uint oracleNum = 1;
     uint valuePerMinute = 1e17;
     uint maxMinutes = 120;
-    uint premiumFee = 1;
+    uint premiumFee = 1e18;
 
     struct FDIContractType {
 
@@ -55,7 +55,7 @@ contract ParametricInsurance {
             maxMinutes = pMaxMinutes;
         }
         if (pPremiumFee > 0) {
-            premiumFee = pPremiumFee;
+            premiumFee = pPremiumFee*1e10;
         }
     }
 

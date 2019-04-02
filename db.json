@@ -2,9 +2,9 @@
   "config": [
     {
       "id": 1,
-      "contractAddress": "0xf4cc5168b744814c1a928ac9afd6ac99608220c8",
+      "contractAddress": "0xc628b363fbcb862f636d07c8876743e27995f2cd",
       "network": "Ganache Cloud",
-      "oracleNum": 1,
+      "oracleNum": 2,
       "valuePerMinute": 0.1,
       "maxMinutes": 120,
       "premiumFee": 1
@@ -55,47 +55,11 @@
     }
   ],
   "fdi": [
-    {
-      "id": "SG1212",
+   {
+      "id": "FA000",
       "status": "Finalized",
-      "funds": 100,
-      "coverageNum": 8,
-      "delay": 0,
-      "oracleNum": 3,
-      "valuePerMinute": 0.1,
-      "maxMinutes": 120,
-      "premiumFee": 1,
-      "insurer": "INSURER_1",
-      "coverages": [
-        {
-          "account": "0x1111_thomaz",
-          "amount": 20,
-          "type": ""
-        },
-        {
-          "account": "0x1111_thomaz",
-          "amount": 20,
-          "type": ""
-        }
-      ],
-      "oracleInputDelay": [
-        {
-          "oracleName": "0x1111_THOMAZ",
-          "isDelayed": false,
-          "delayValue": 0
-        },
-        {
-          "oracleName": "0x1111_THOMAZ",
-          "isDelayed": true,
-          "delayValue": 10
-        }
-      ]
-    },
-    {
-      "id": "BA1234",
-      "status": "Open",
       "funds": "1",
-      "coverageNum": "4",
+      "coverageNum": "1",
       "delay": 0,
       "oracleNum": 1,
       "valuePerMinute": 0.1,
@@ -103,15 +67,21 @@
       "premiumFee": 1,
       "insurer": "INSURER_1",
       "coverages": [],
-      "oracleInputDelay": []
+      "oracleInputDelay": [
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": false,
+          "delayValue": 0
+        }
+      ]
     },
     {
-      "id": "JJ1234",
-      "status": "Open",
+      "id": "ZZ001",
+      "status": "Finalized",
       "funds": "1",
-      "coverageNum": 3,
+      "coverageNum": 1,
       "delay": 0,
-      "oracleNum": 1,
+      "oracleNum": 2,
       "valuePerMinute": 0.1,
       "maxMinutes": 120,
       "premiumFee": 1,
@@ -123,7 +93,18 @@
           "type": ""
         }
       ],
-      "oracleInputDelay": []
+      "oracleInputDelay": [
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 10
+        },
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 10
+        }
+      ]
     }
   ]
 }
