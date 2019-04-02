@@ -109,14 +109,20 @@
       "id": "JJ1234",
       "status": "Open",
       "funds": "1",
-      "coverageNum": "4",
+      "coverageNum": 3,
       "delay": 0,
       "oracleNum": 1,
       "valuePerMinute": 0.1,
       "maxMinutes": 120,
       "premiumFee": 1,
       "insurer": "INSURER_1",
-      "coverages": [],
+      "coverages": [
+        {
+          "account": "0xC33712a03dE2b496d17a057c8A75B371ED0717c2",
+          "amount": 1,
+          "type": ""
+        }
+      ],
       "oracleInputDelay": []
     }
   ]

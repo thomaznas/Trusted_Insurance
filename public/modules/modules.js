@@ -814,7 +814,16 @@ var loadBuyFDIClick = function(){
 };
  
 async function buyFDIClick() {
-    var amount = FDI.premiumFee;
+    var amount;
+    
+
+    FDI = lastRetObj;
+    if (!isEmpty(FDI)) {
+        amount = FDI.premiumFee;
+    }
+    else {
+        amount = 1;
+    }
 
     if (isNaN(amount)) {
         alert("Amount needs to be a valid number !");
