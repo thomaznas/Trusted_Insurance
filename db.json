@@ -58,12 +58,6 @@
       "password": "t1",
       "MMAccount": "0x31DECdF0353A43Ab11Ddc0e33b68682fFE955d13",
       "type": "P"
-    },
-    {
-      "userId": "T",
-      "password": "t",
-      "MMAccount": "0x31DECdF0353A43Ab11Ddc0e33b686Xx82fFE955d13",
-      "type": "P"
     }
   ],
   "fdi": [
