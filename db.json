@@ -2,18 +2,18 @@
   "config": [
     {
       "id": 1,
-      "contractAddress": "0xc628b363fbcb862f636d07c8876743e27995f2cd",
-      "network": "Ganache Cloud",
-      "oracleNum": 2,
-      "valuePerMinute": 0.1,
+      "contractAddress": "0x525fa8359cce625fe6bc89de5297a90977f48904",
+      "network": "Rinkeby",
+      "oracleNum": 1,
+      "valuePerMinute": 0.01,
       "maxMinutes": 120,
-      "premiumFee": 1
+      "premiumFee": 0.1
     }
   ],
   "users": [
     {
-      "userId": "THOMAZ",
-      "password": "t1",
+      "userId": "PASSENGER 1",
+      "password": "p1",
       "MMAccount": "0xC33712a03dE2b496d17a057c8A75B371ED0717c2",
       "type": "P"
     },
@@ -52,10 +52,16 @@
       "password": "i2",
       "MMAccount": "0xaCdF251620504591eD204894Aca9D382F7A7167B",
       "type": "I"
+    },
+    {
+      "userId": "THOMAZ",
+      "password": "t1",
+      "MMAccount": "0x31DECdF0353A43Ab11Ddc0e33b68682fFE955d13",
+      "type": "P"
     }
   ],
   "fdi": [
-   {
+    {
       "id": "FA000",
       "status": "Finalized",
       "funds": "1",
@@ -103,6 +109,63 @@
           "oracleName": "ORACLE_1",
           "isDelayed": true,
           "delayValue": 10
+        }
+      ]
+    },
+    {
+      "id": "JJ1234",
+      "status": "Finalized",
+      "funds": "5",
+      "coverageNum": 4,
+      "delay": 0,
+      "oracleNum": 1,
+      "valuePerMinute": 0.01,
+      "maxMinutes": 120,
+      "premiumFee": 0.1,
+      "insurer": "INSURER_1",
+      "coverages": [
+        {
+          "account": "0xC33712a03dE2b496d17a057c8A75B371ED0717c2",
+          "amount": 0.1,
+          "type": ""
+        }
+      ],
+      "oracleInputDelay": [
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 120
+        }
+      ]
+    },
+    {
+      "id": "JJ0000",
+      "status": "Finalized",
+      "funds": "1",
+      "coverageNum": 8,
+      "delay": 0,
+      "oracleNum": 1,
+      "valuePerMinute": 0.01,
+      "maxMinutes": 120,
+      "premiumFee": 0.1,
+      "insurer": "INSURER_2",
+      "coverages": [
+        {
+          "account": "0x31DECdF0353A43Ab11Ddc0e33b68682fFE955d13",
+          "amount": 0.1,
+          "type": ""
+        },
+        {
+          "account": "0x83073AA0446B94ABE6F9D0C497290655E64fE367",
+          "amount": 0.1,
+          "type": ""
+        }
+      ],
+      "oracleInputDelay": [
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 100
         }
       ]
     }

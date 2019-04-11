@@ -14,7 +14,7 @@ async function setupWeb3(configData,callbackFunctionAccountChanged,callbackProce
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
         if (typeof web3 !== 'undefined') {
             // Use Mist/MetaMask's provider
-            web3 = new Web3(web3.currentProvider);
+            web3 = new Web3(window.web3.currentProvider);    
         } else {
             // Handle the case where the user doesn't have Metamask installed
             // Probably show them a message prompting them to install Metamask
@@ -27,7 +27,9 @@ async function setupWeb3(configData,callbackFunctionAccountChanged,callbackProce
 
         FDIContract = new web3.eth.Contract(parametricInsuranceABI, configData.contractAddress);
 
-        web3.currentProvider.publicConfigStore.on('update', accountChanged);
+        if (!isMobile()) {
+            web3.currentProvider.publicConfigStore.on('update', accountChanged);
+        }
 
         if (callAccountChange) {
             callbackFunctionAccountChanged(currentMAAccount)
@@ -90,6 +92,7 @@ async function setConfigContractAPI(configParam) {
 }
 
 async function inputDelayContractAPI(IDInputDelayInfo) {
+    
     var result;
     try {
         let result = await FDIContract.methods.inputOracleInfoFDI(IDInputDelayInfo.id,
@@ -101,6 +104,38 @@ async function inputDelayContractAPI(IDInputDelayInfo) {
     } catch (err) {
         return err.message; 
     }
+
+/*
+    let tx_builder = FDIContract.methods.inputOracleInfoFDI(IDInputDelayInfo.id,
+                                            IDInputDelayInfo.inputDelayInfo.isDelayed,
+                                            IDInputDelayInfo.inputDelayInfo.delayValue,
+                                            IDInputDelayInfo.inputDelayInfo.oracleName);
+    let encoded_tx = tx_builder.encodeABI();
+    let transactionObject = {
+        gas: 3000000,
+        data: encoded_tx,
+        from: currentMAAccount,
+        to: configData.contractAddress
+    }    
+
+    var signedTx;
+
+    try {
+        private_key = "7D3BC904427DEAD602A4F63A7C691C7F239B7AA196D863B01AA9D984D191BDAF"
+        signedTx = await web3.eth.accounts.signTransaction(transactionObject, private_key)
+    } 
+    catch (err) {
+        return err.message; 
+    }
+    
+    try {
+        let result = await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+        return "SUCCESS";
+
+    } catch (err) {
+        return err.message; 
+    }
+*/    
 }
 
 async function createNewFDIContractAPI(fdi) {

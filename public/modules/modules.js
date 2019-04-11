@@ -10,6 +10,15 @@ var configData = { id: 1, network: "Rinkeby",
 
 var firstTimeAccountChanged = true;
 
+const { userAgent: ua } = navigator
+const isIOS = ua.includes('iPhone') // “iPhone OS”
+const isAndroid = ua.includes('Android')
+
+const { currentProvider: cp } = window.web3
+const isToshi = !!cp.isToshi
+const isCipher = !!cp.isCipher
+const isMetaMask = !!cp.isMetaMask
+
 var ui = {};
 
 ui.navigation = `
@@ -257,6 +266,8 @@ ui.createNewFDI = `
 `;
 
 var target     = document.getElementById('target');
+var prevTargetHTML =  "";
+var wait       = document.getElementById('wait');
 var navigation = document.getElementById('navigation');
 var loggedin;
 var contractInfo;
@@ -268,12 +279,27 @@ var currentFDI = null;
 var lastViewParam = null;
 var updateMMAccUserType = "";
 
+showWait(false);
+
 navigation.innerHTML += ui.navigation;
 
 var defaultModule = function(){
     target.innerHTML = ui.default;
     activeNavButton = navigation;
 };
+
+function showWait(show) {
+    if (show) {
+        msg = "PLEASE WAIT ! Processing your transaction on the blockchain.";
+        prevTargetHTML = target.innerHTML;
+        target.innerHTML = msg;
+        wait.style.visibility = 'visible';
+    }
+    else{
+        wait.style.visibility = 'hidden';
+        target.innerHTML = prevTargetHTML;
+    }
+}
 
 // Useful functions
 function isEmpty(obj) {
@@ -515,7 +541,12 @@ async function loadConfig() {
         return;
     }
 
+    showWait(true);
+
     var msg = await setConfigContractAPI(configParam);
+
+    showWait(false);
+
     if (!msg.includes("SUCCESS")) {
         target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
         return;
@@ -836,7 +867,12 @@ async function buyFDIClick() {
         return;
     }
 
+    showWait(true);
+
     var msg = await buyFDIContractAPI(currentFDI.id,amount);
+
+    showWait(false);
+
     if (!msg.includes("SUCCESS")) {
         target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
         return;
@@ -927,7 +963,12 @@ async function inputDelayClick() {
     IDInputDelayInfo.id = currentFDI.id
     IDInputDelayInfo.inputDelayInfo = inputDelayInfo
 
+    showWait(true);
+
     var msg = await inputDelayContractAPI(IDInputDelayInfo);
+
+    showWait(false);
+
     if (!msg.includes("SUCCESS")) {
         target.innerHTML = "FAILURE: Transaction did not complete ! - " + msg;
         return;
@@ -1021,7 +1062,12 @@ async function createNewFDIClick() {
     fdi.premiumFee = configData.premiumFee;
     fdi.insurer = currentUser.userId;
 
+    showWait(true);
+
     let msg = await createNewFDIContractAPI(fdi);
+
+    showWait(false);
+
     if (!msg.includes("SUCCESS")) {
         target.innerHTML = "FAILURE: New flight delay insurance was not created ..." + msg;
         return;
@@ -1042,6 +1088,10 @@ var newFDIProcess = function() {
     }
 }
 
+function isMobile() {
+    return (isAndroid || isIOS);
+}
+
 loggedin = document.getElementById('loggedin');
 contractInfo = document.getElementById('contractInfo');
 
@@ -1050,5 +1100,4 @@ getConfigData(callbackSetupWeb3API);
 defaultModule();
 
 console.log('Finished');
-
 
