@@ -93,8 +93,10 @@ function findUser(userId) {
     var ret;
   
     ret = false;
-    db.get('users').push(user).write();
-    ret = true;
+    if (!findUserMetaMask(user.MMAccount)) {
+        db.get('users').push(user).write();
+        ret = true;
+    }
   
     return ret;
 }
