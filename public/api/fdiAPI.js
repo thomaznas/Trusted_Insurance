@@ -92,7 +92,7 @@ async function setConfigContractAPI(configParam) {
 }
 
 async function inputDelayContractAPI(IDInputDelayInfo) {
-    
+   
     var result;
     try {
         let result = await FDIContract.methods.inputOracleInfoFDI(IDInputDelayInfo.id,
@@ -135,7 +135,7 @@ async function inputDelayContractAPI(IDInputDelayInfo) {
     } catch (err) {
         return err.message; 
     }
-*/    
+  */ 
 }
 
 async function createNewFDIContractAPI(fdi) {

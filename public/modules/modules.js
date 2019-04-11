@@ -21,7 +21,37 @@ const isMetaMask = !!cp.isMetaMask
 
 var ui = {};
 
-ui.navigation = `
+ui.navigation_mobile = `
+<!-- ------------- YOUR CODE: Navigation UI ------------- --> 
+<a class="navbar-brand" href="#" onclick="defaultModule();" >
+  <img src="/fdi_icon.png" width="50" height="50" class="d-inline-block align-center" alt=""  >
+   Flight Delay Insurance</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+ <span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+
+    <li class="nav-item active">
+        <a class="dropdown-item" href="#" onclick="loadViewFDIParam('',['Open'],'','loadBuyFDIClickParam')" id="navViewFDI">Buy an Insurance</a>
+    </li>
+    
+    <li class="nav-item active">
+        <a class="dropdown-item" href="#" onclick="loadCreateUserParam()">Sign up</a>
+    </li>
+    
+    </ul>
+    <form class="form-inline my-2 my-lg-0" hidden>
+            <b id="contractInfo"> SC - ERROR </b>
+            <input type="checkbox" name="syncMetaMask" id="syncMetaMask" value="" checked="checked">Sync MetaMask ? -  
+            <b id="loggedin"> ? </b>
+    </form>
+</div>
+
+`;
+
+ui.navigation_desktop = `
 <!-- ------------- YOUR CODE: Navigation UI ------------- --> 
 <a class="navbar-brand" href="#" onclick="defaultModule();" >
   <img src="/fdi_icon.png" width="50" height="50" class="d-inline-block align-center" alt=""  >
@@ -98,6 +128,8 @@ ui.navigation = `
 
 `;
 
+ui.navigation = ui.navigation_desktop;
+
 function openTab(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -119,7 +151,35 @@ function openTab(evt, tabName) {
     evt.currentTarget.className += " active";
 }
 
-ui.tabCode = `
+ui.tabCode_mobile = `
+    <!-- Tab links -->
+    <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'generalTab')" id="defaultOpen" >General Info</button>
+    <button class="tablinks" onclick="openTab(event, 'coverageTab')" hidden >Coverages</button>
+    <button class="tablinks" onclick="openTab(event, 'oracleTab')" hidden >ORACLE</button>
+    <button class="tablinks" onclick="openTab(event, 'configTab')">Config</button>
+    </div>
+
+    <!-- Tab content -->
+    <div id="generalTab" class="tabcontent">
+        <-GT->
+    </div>
+
+    <div id="coverageTab" class="tabcontent">
+        <-CT->
+    </div>
+
+    <div id="oracleTab" class="tabcontent">
+        <-OT->
+    </div>
+
+    <div id="configTab" class="tabcontent">
+        <-FT->
+    </div>
+`; 
+
+
+ui.tabCode_desktop = `
     <!-- Tab links -->
     <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'generalTab')" id="defaultOpen" >General Info</button>
@@ -146,8 +206,20 @@ ui.tabCode = `
     </div>
 `; 
 
+ui.tabCode = ui.tabCode_desktop;
 
-ui.default = `
+ui.default_mobile = `
+    <!-- ------------- YOUR CODE: Default UI -------------  --> 
+    <div class="card bg-light mb-3" style="max-width: 35rem;" >
+        <div class="card-header">Flight Insurance Delay Home </div>
+        <div class="card-body">
+          <h5 class="card-title">Welcome ! Enjoy your hassle free coverage</h5>
+          <img src="/fdi.png" width="342" height="260" class="d-inline-block align-center" alt="">
+        </div>
+    </div>
+`; 
+
+ui.default_desktop = `
     <!-- ------------- YOUR CODE: Default UI -------------  --> 
     <div class="card bg-light mb-3" style="max-width: 35rem;" >
         <div class="card-header">Flight Insurance Delay Home </div>
@@ -157,6 +229,8 @@ ui.default = `
         </div>
     </div>
 `; 
+
+ui.default = ui.default_desktop;
 
 ui.login = `
     <div class="card bg-light mb-3" style="max-width: 15rem;"  >
@@ -186,7 +260,26 @@ ui.Config = `
     </div>    
 `;
 
-ui.CreateUser = `
+ui.CreateUser_mobile = `
+    <div class="card bg-light mb-3" style="max-width: 35rem;"  >
+        <div class="card-header" id="createUserTitle"> Create a New User </div>
+            <div class="card-body" id="createUserBody">
+                Name: <br> <input type="input" id="createUserId" placeholder="" size=32>  <br>
+                MetaMask Account: <br> <input type="input" id="createUserMMAcount" placeholder="" value="<-MM->" size=34>  <br>
+                Password: <br> <input type="password" id="createUserPassword" placeholder="" >  <br>
+                Re-type your Password: <br> <input type="password" id="createUserPassword2" placeholder="" >  <br>
+                User type: <br> 
+                <input type="radio" name="createUserType" id="createUserTypePassenger" value="P" checked="checked">Passenger 
+                <input type="radio" name="createUserType" id="createUserTypeInsurer" value="I" hidden >Insurer 
+                <input type="radio" name="createUserType" id="createUserTypeOracle" value="O" hidden >Trusted Oracle 
+                <br><br>
+                <button type="button" class="btn btn-info" onclick="loadCreateUser()">Create User</button>
+        </div>        
+    </div>    
+
+`;
+
+ui.CreateUser_desktop = `
     <div class="card bg-light mb-3" style="max-width: 35rem;"  >
         <div class="card-header" id="createUserTitle"> Create a New User </div>
             <div class="card-body" id="createUserBody">
@@ -204,6 +297,8 @@ ui.CreateUser = `
     </div>    
 
 `;
+
+ui.CreateUser = ui.CreateUser_desktop;
 
 ui.UpdateMMAccount = `
     <div class="card bg-light mb-3" style="max-width: 35rem;"  >
@@ -264,29 +359,6 @@ ui.createNewFDI = `
         </div>        
     </div>    
 `;
-
-var target     = document.getElementById('target');
-var prevTargetHTML =  "";
-var wait       = document.getElementById('wait');
-var navigation = document.getElementById('navigation');
-var loggedin;
-var contractInfo;
-var activeNavButton;
-var lastRetMsg;
-var lastRetObj;
-var currentUser = null;
-var currentFDI = null;
-var lastViewParam = null;
-var updateMMAccUserType = "";
-
-showWait(false);
-
-navigation.innerHTML += ui.navigation;
-
-var defaultModule = function(){
-    target.innerHTML = ui.default;
-    activeNavButton = navigation;
-};
 
 function showWait(show) {
     if (show) {
@@ -1091,6 +1163,37 @@ var newFDIProcess = function() {
 function isMobile() {
     return (isAndroid || isIOS);
 }
+
+var defaultModule = function(){
+    target.innerHTML = ui.default;
+    activeNavButton = navigation;
+};
+
+
+var target     = document.getElementById('target');
+var prevTargetHTML =  "";
+var wait       = document.getElementById('wait');
+var navigation = document.getElementById('navigation');
+var loggedin;
+var contractInfo;
+var activeNavButton;
+var lastRetMsg;
+var lastRetObj;
+var currentUser = null;
+var currentFDI = null;
+var lastViewParam = null;
+var updateMMAccUserType = "";
+
+showWait(false);
+
+if (isMobile()) {
+    ui.default = ui.default_mobile;
+    ui.navigation = ui.navigation_mobile;
+    ui.tabCode = ui.tabCode_mobile;
+    ui.CreateUser = ui.CreateUser_mobile;
+}
+
+navigation.innerHTML += ui.navigation;
 
 loggedin = document.getElementById('loggedin');
 contractInfo = document.getElementById('contractInfo');

@@ -10,7 +10,6 @@
       "premiumFee": 0.1
     }
   ],
-  
   "users": [
     {
       "userId": "PASSENGER 1",
@@ -169,6 +168,20 @@
           "delayValue": 100
         }
       ]
+    },
+    {
+      "id": "AA1234",
+      "status": "Open",
+      "funds": "0.001",
+      "coverageNum": "5",
+      "delay": 0,
+      "oracleNum": 1,
+      "valuePerMinute": 0.01,
+      "maxMinutes": 120,
+      "premiumFee": 0.1,
+      "insurer": "INSURER_1",
+      "coverages": [],
+      "oracleInputDelay": []
     }
   ]
 }
