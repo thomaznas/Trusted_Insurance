@@ -171,7 +171,7 @@
     },
     {
       "id": "AA1234",
-      "status": "Open",
+      "status": "Finalized",
       "funds": "0.001",
       "coverageNum": "5",
       "delay": 0,
@@ -181,7 +181,13 @@
       "premiumFee": 0.1,
       "insurer": "INSURER_1",
       "coverages": [],
-      "oracleInputDelay": []
+      "oracleInputDelay": [
+        {
+          "oracleName": "ORACLE_1",
+          "isDelayed": true,
+          "delayValue": 234
+        }
+      ]
     }
   ]
 }

@@ -94,6 +94,23 @@ async function setConfigContractAPI(configParam) {
 async function inputDelayContractAPI(IDInputDelayInfo) {
    
     var result;
+
+    try {
+
+        if (IDInputDelayInfo.inputDelayInfo.isDelayed) {
+            msgToBeSigned = "Flight " + IDInputDelayInfo.id + " IS delayed " + JSON.stringify(IDInputDelayInfo.inputDelayInfo.delayValue) + " minutes!"
+        }
+        else {
+            msgToBeSigned = "Flight " + IDInputDelayInfo.id + " is NOT delayed!"
+        }
+
+        let result = await web3.eth.personal.sign(msgToBeSigned,currentMAAccount)
+
+
+    } catch (err) {
+        return err.message; 
+    }
+
     try {
         let result = await FDIContract.methods.inputOracleInfoFDI(IDInputDelayInfo.id,
                                                                   IDInputDelayInfo.inputDelayInfo.isDelayed,

@@ -317,7 +317,7 @@ ui.UpdateMMAccount = `
 ui.buyFDIParam = `
     <div class="card-body" id="buyFDIParam">
         <br>
-        <b>DO YOU WANT TO BUY THIS COVERAGE ? : </b>  
+        <b>WOULD YOU LIKE TO PURCHASE THIS POLICY ? </b>  
         <br>
         <br> Cost: <-FDICost-> 
         <button type="button" class="btn btn-info" onclick="buyFDIClick()">Confirm</button>
@@ -344,16 +344,21 @@ ui.createNewFDI = `
     <div class="card bg-light mb-3" style="max-width: 80rem;"  >
         <div class="card-header">New Flight Delay Insurance </div>
         <div class="card-body" id="createNewFDI">
-            <b>ID: - </b>  
+            <b>Flight Number: - </b>  
             <input type="input" id="newFDIID" size=40 value="" > 
             <br> <br> 
-            <b>STATUS: - </b> <tr> Open 
+            <b>Flight Date and Time: - </b>  
+            <input type="datetime-local" id="newFDIDATETIME"
+                   name="newFDIDATETIME" value="2019-05-02T19:30"
+                   min="2018-06-07T00:00" max="2020-06-14T00:00">
+            <br> <br> 
+            <b>Sales Status: - </b> <tr> Open 
             <br><br> 
-            <b>TOTAL COMPENSATION: - </b>  
+            <b>Total Compensation Commitment: - </b>  
             <input type="input" id="newFDIFunds" size=20 value="0.0" > 
             <br><br> 
-            <b>MAXIMUM NUMBER OF COVERAGES: - </b>  
-            <input type="input" id="newFDICoverageNum" size=20 value="0" > >   
+            <b>Maximum Polices to be Sold: - </b>  
+            <input type="input" id="newFDICoverageNum" size=20 value="20" >  
             <br><br>
             <button type="button" class="btn btn-info" onclick="createNewFDIClick()">Create</button>
         </div>        
@@ -443,19 +448,19 @@ function oneFDITablify(FDI) {
 
         html += ui.tabCode;
 
-        htmlGT = '<b>Flight Delay Insurance - FDI - Details<b>';
+        htmlGT = '<b>Flight Delay Insurance - FDI - Details</b>';
 
         htmlGT += '<br><br>';
 
-        htmlGT += '<b>ID:</b>' + ' - ' + FDI.id;
+        htmlGT += '<b>Flight Number: </b>' + ' - ' + FDI.id;
 
         htmlGT += '<br>';
 
-        htmlGT += '' + '<b> STATUS:</b>' + ' - ' + FDI.status;
+        htmlGT += '' + '<b> Sales Status: </b>' + ' - ' + FDI.status;
 
         htmlGT += '<br>';
 
-        htmlGT += '' + '<b> AVAILABLE COVERAGES:</b>' + ' - ' + FDI.coverageNum;
+        htmlGT += '' + '<b> Remaining Policies Available: </b>' + ' - ' + FDI.coverageNum;
 
         htmlGT += '<br><br>';
 
@@ -471,23 +476,23 @@ function oneFDITablify(FDI) {
 
         htmlOT += '<br><br>';
 
-        htmlFT = '<b>Flight Delay Insurance - FDI - Config Data<b>';
+        htmlFT = '<b>Flight Delay Insurance - FDI - Config Data</b>';
 
         htmlFT += '<br><br>';
 
-        htmlFT += '<b>oracleNum: </b>' + FDI.oracleNum;
+        htmlFT += '<b>Number of Oracles: </b>' + FDI.oracleNum;
 
         htmlFT += '<br>';
 
-        htmlFT += '' + '<b> valuePerMinute:</b>' +  FDI.valuePerMinute;
+        htmlFT += '' + '<b> Compensation per minute of delay: </b>' +  FDI.valuePerMinute;
 
         htmlFT += '<br>';
 
-        htmlFT += '' + '<b> maxMinutes:</b>' + FDI.maxMinutes;
+        htmlFT += '' + '<b> Maximum minutes for compensation: </b>' + FDI.maxMinutes;
 
         htmlFT += '<br>';
 
-        htmlFT += '' + '<b> premiumFee:</b>' + FDI.premiumFee;
+        htmlFT += '' + '<b> Premium: </b>' + FDI.premiumFee;
         
         htmlFT += '<br><br>';
     }
